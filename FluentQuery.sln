@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentQuery", "FluentQuery\FluentQuery.csproj", "{9821DD77-11AD-4832-9E74-9B6059E934F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FluentQuery.Test", "FluentQuery.Test\FluentQuery.Test.csproj", "{21BF181C-1E37-4543-B0AD-C46355D7C7D9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9821DD77-11AD-4832-9E74-9B6059E934F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9821DD77-11AD-4832-9E74-9B6059E934F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9821DD77-11AD-4832-9E74-9B6059E934F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9821DD77-11AD-4832-9E74-9B6059E934F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21BF181C-1E37-4543-B0AD-C46355D7C7D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21BF181C-1E37-4543-B0AD-C46355D7C7D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21BF181C-1E37-4543-B0AD-C46355D7C7D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21BF181C-1E37-4543-B0AD-C46355D7C7D9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
