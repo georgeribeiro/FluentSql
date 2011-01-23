@@ -9,20 +9,29 @@ namespace FluentQuery
 {
     public class Table
     {
-        private IList<Field> _projects = new List<Field>();
+        private IList<IProjection> _projects = new List<IProjection>();
         private IList<IJoin> _joins = new List<IJoin>();
         public string Name { get; set; }
+        public string Alias { get; set; }
 
         public Table(string name)
         {
             Name = name;
+            Alias = name;
+        }
+
+        public Table(string name, string alias)
+        {
+            Name = name;
+            Alias = alias;
         }
 
         public Field this[string name]
         {
             get
             {
-                return new Field(this, name);
+                var field = from f in _projects where f.Name == name select f;
+                return field.Count() > 0 ? (Field)field.Single() : new Field(this, name);
             }
         }
 
@@ -38,7 +47,7 @@ namespace FluentQuery
 
         public string ToSql()
         {
-            return String.Format("SELECT {0} FROM {1}{2}", BuildSelect(), Name, BuildJoin());
+            return String.Format("SELECT {0} {1}{2}", BuildSelect(), BuildFrom(), BuildJoin());
         }
 
         public Table Project(params Field[] fields)
@@ -78,6 +87,18 @@ namespace FluentQuery
             else
             {
                 return String.Empty;
+            }
+        }
+
+        private string BuildFrom()
+        {
+            if (Alias != Name)
+            {
+                return String.Format("FROM {0} AS {1}", Name, Alias);
+            }
+            else
+            {
+                return String.Format("FROM {0}", Name);
             }
         }
 

@@ -21,7 +21,7 @@ namespace FluentQuery.Clause
 
         public string ToSql()
         {
-            return String.Format("JOIN {0} ON {1}", _table.Name, _expression.ToSql());
+            return String.Format("JOIN {0} ON {1}", _table.Alias, _expression.ToSql());
         }
 
         #endregion

@@ -51,9 +51,9 @@
     <Compile Include="Expression\Equal.cs" />
     <Compile Include="Expression\IEqual.cs" />
     <Compile Include="Expression\IExpression.cs" />
-    <Compile Include="Expression\INot.cs" />
     <Compile Include="Expression\Not.cs" />
     <Compile Include="Field.cs" />
+    <Compile Include="IProjection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Table.cs" />
   </ItemGroup>

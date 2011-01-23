@@ -19,7 +19,9 @@ namespace FluentQuery.Expression
 
         public string ToSql()
         {
-            return String.Format("{0} = {1}", _one.Name, _two.Name);
+            string alias_one = _one.Alias != null ? _one.Alias : _one.Project;
+            string alias_two = _two.Alias != null ? _two.Alias : _two.Project;
+            return String.Format("{0} = {1}", alias_one, alias_two);
         }
 
         #endregion

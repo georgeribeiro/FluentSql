@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FluentQuery.Expression
 {
-    public class Not : INot
+    public struct Not : IExpression
     {
         IExpression _expression;
         Field _field;
@@ -13,6 +13,7 @@ namespace FluentQuery.Expression
         public Not(Field field)
         {
             _field = field;
+            _expression = null;
         }
 
         public IExpression Equal(Field other)

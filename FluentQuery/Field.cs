@@ -6,23 +6,30 @@ using FluentQuery.Expression;
 
 namespace FluentQuery
 {
-    public struct Field
+    public struct Field : IProjection
     {
         private Table _table;
         private string _name;
+        private string _alias;
 
         public Field(Table table, string name)
         {
-            this._table = table;
-            this._name = name;
+            _table = table;
+            _name = name;
+            _alias = null;
         }
 
+        public Field As(string alias)
+        {
+            _alias = alias;
+            return this;
+        }
 
         public string Alias
         {
             get
             {
-                return String.Format("{0}_{1}", this._table.Name, this._name);
+                return _alias;
             }
         }
 
@@ -30,19 +37,30 @@ namespace FluentQuery
         {
             get
             {
-                return String.Format("{0}.{1}", this._table.Name, this._name);
+                return _name;
             }
         }
 
-        #region IField Members
+        public string Project
+        {
+            get
+            {
+                return String.Format("{0}.{1}", _table.Alias, _name);
+            }
+        }
+
+        #region IProjection Members
 
         public string ToSql()
         {
-            if (_name == "*")
+            if (!string.IsNullOrEmpty(this.Alias))
             {
-                return String.Format("{0}", this.Name);
+                return string.Format("{0} AS {1}", this.Project, this.Alias);
             }
-            return String.Format("{0} AS {1}", this.Name, this.Alias);
+            else
+            {
+                return string.Format("{0}", this.Project);
+            }
         }
 
         #endregion
@@ -59,7 +77,7 @@ namespace FluentQuery
             return new Equal(this, other);
         }
 
-        public INot Not
+        public Not Not
         {
             get
             {
