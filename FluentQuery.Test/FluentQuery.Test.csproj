@@ -49,8 +49,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\TestField.cs" />
+    <Compile Include="Api\TestTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Query.cs" />
+    <Compile Include="ComplexQuery.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentQuery\FluentQuery.csproj">

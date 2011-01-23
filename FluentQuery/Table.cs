@@ -9,15 +9,15 @@ namespace FluentQuery
 {
     public class Table
     {
-        private IList<IProjection> _projects = new List<IProjection>();
+        private IList<Field> _projects = new List<Field>();
         private IList<IJoin> _joins = new List<IJoin>();
+        private IList<ExpressionBase> _wheres = new List<ExpressionBase>();
         public string Name { get; set; }
         public string Alias { get; set; }
 
         public Table(string name)
         {
             Name = name;
-            Alias = name;
         }
 
         public Table(string name, string alias)
@@ -43,11 +43,22 @@ namespace FluentQuery
             }
         }
 
-        #region Table Members
+        # region Methods
+
+        public void Clear()
+        {
+            _projects.Clear();
+            _joins.Clear();
+            _wheres.Clear();
+        }
+
+        #endregion
+
+        #region Clauses Members
 
         public string ToSql()
         {
-            return String.Format("SELECT {0} {1}{2}", BuildSelect(), BuildFrom(), BuildJoin());
+            return String.Format("SELECT {0} {1}{2}{3}", BuildSelect(), BuildFrom(), BuildJoin(), BuildWhere());
         }
 
         public Table Project(params Field[] fields)
@@ -59,9 +70,33 @@ namespace FluentQuery
             return this;
         }
 
-        public Table Join(Table table, IExpression expression)
+        public Table Join(Table table, ExpressionBase expression)
         {
             _joins.Add(new Join(table, expression));
+            return this;
+        }
+
+        public Table LeftJoin(Table table, ExpressionBase expresssion)
+        {
+            _joins.Add(new LeftJoin(table, expresssion));
+            return this;
+        }
+
+        public Table RightJoin(Table table, ExpressionBase expression)
+        {
+            _joins.Add(new RightJoin(table, expression));
+            return this;
+        }
+
+        public Table InnerJoin(Table table, ExpressionBase expression)
+        {
+            _joins.Add(new InnerJoin(table, expression));
+            return this;
+        }
+
+        public Table Where(ExpressionBase expression)
+        {
+            this._wheres.Add(expression);
             return this;
         }
 
@@ -92,14 +127,20 @@ namespace FluentQuery
 
         private string BuildFrom()
         {
-            if (Alias != Name)
+            if (!string.IsNullOrEmpty(Alias))
             {
                 return String.Format("FROM {0} AS {1}", Name, Alias);
-            }
-            else
+            } 
+            return String.Format("FROM {0}", Name);
+        }
+
+        private string BuildWhere()
+        {
+            if (_wheres.Count > 0)
             {
-                return String.Format("FROM {0}", Name);
+                return " WHERE " + string.Join(" AND ", (from e in _wheres select e.ToSql()).ToArray());
             }
+            return string.Empty;
         }
 
         #endregion

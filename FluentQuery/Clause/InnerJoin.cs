@@ -6,15 +6,15 @@ using FluentQuery.Expression;
 
 namespace FluentQuery.Clause
 {
-    public class Join : JoinBase
+    public class InnerJoin : JoinBase
     {
-        public Join(Table table, ExpressionBase expression) : base(table, expression) { }
+        public InnerJoin(Table table, ExpressionBase expression) : base(table, expression) { }
 
         protected override string Clause
         {
             get
             {
-                return "JOIN";
+                return "INNER JOIN";
             }
         }
     }

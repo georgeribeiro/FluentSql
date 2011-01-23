@@ -47,11 +47,18 @@
   <ItemGroup>
     <Compile Include="Clause\IClause.cs" />
     <Compile Include="Clause\IJoin.cs" />
+    <Compile Include="Clause\InnerJoin.cs" />
     <Compile Include="Clause\Join.cs" />
+    <Compile Include="Clause\JoinBase.cs" />
+    <Compile Include="Clause\LeftJoin.cs" />
+    <Compile Include="Clause\RightJoin.cs" />
+    <Compile Include="Expression\NotEqual.cs" />
+    <Compile Include="Expression\LogicOperatorAnd.cs" />
     <Compile Include="Expression\Equal.cs" />
-    <Compile Include="Expression\IEqual.cs" />
-    <Compile Include="Expression\IExpression.cs" />
+    <Compile Include="Expression\ExpressionBase.cs" />
     <Compile Include="Expression\Not.cs" />
+    <Compile Include="Expression\LogicOperatorOr.cs" />
+    <Compile Include="Expression\OperatorBase.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="IProjection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

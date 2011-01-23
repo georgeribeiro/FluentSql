@@ -5,25 +5,21 @@ using System.Text;
 
 namespace FluentQuery.Expression
 {
-    class Equal : IEqual
+    public class Equal : OperatorBase
     {
-        private Field _one;
-        private Field _two;
-        public Equal(Field one, Field two)
+        public Equal(Field one, Field two) : base(one, two) { }
+
+        public Equal(Field one, string two) : base(one, two) { }
+
+        public Equal(Field one, int two) : base(one, two) { }
+
+        public Equal(Field one, decimal two) : base(one, two) { }
+
+        public Equal(Field one, DateTime two) : base(one, two) { }
+
+        public override string ToSql()
         {
-            _one = one;
-            _two = two;
+            return string.Format("{0} = {1}", One, Two);
         }
-
-        #region IExpression Members
-
-        public string ToSql()
-        {
-            string alias_one = _one.Alias != null ? _one.Alias : _one.Project;
-            string alias_two = _two.Alias != null ? _two.Alias : _two.Project;
-            return String.Format("{0} = {1}", alias_one, alias_two);
-        }
-
-        #endregion
     }
 }

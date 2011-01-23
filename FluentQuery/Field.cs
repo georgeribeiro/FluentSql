@@ -19,6 +19,11 @@ namespace FluentQuery
             _alias = null;
         }
 
+        public override int GetHashCode()
+        {
+            return this.Project.GetHashCode();
+        }
+
         public Field As(string alias)
         {
             _alias = alias;
@@ -45,7 +50,7 @@ namespace FluentQuery
         {
             get
             {
-                return String.Format("{0}.{1}", _table.Alias, _name);
+                return String.Format("{0}.{1}", string.IsNullOrEmpty(_table.Alias) ? _table.Name : _table.Alias, Name);
             }
         }
 
@@ -72,10 +77,56 @@ namespace FluentQuery
 
         #region expressions
 
-        public IExpression Equal(Field other)
+        public ExpressionBase Equal(Field other)
         {
             return new Equal(this, other);
         }
+
+        public ExpressionBase Equal(string obj)
+        {
+            return new Equal(this, obj);
+        }
+
+        public ExpressionBase Equal(int obj)
+        {
+            return new Equal(this, obj);
+        }
+
+        public ExpressionBase Equal(Decimal obj)
+        {
+            return new Equal(this, obj);
+        }
+
+        public ExpressionBase Equal(DateTime obj)
+        {
+            return new Equal(this, obj);
+        }
+
+        public ExpressionBase NotEqual(Field other)
+        {
+            return new NotEqual(this, other);
+        }
+
+        public ExpressionBase NotEqual(string obj)
+        {
+            return new NotEqual(this, obj);
+        }
+
+        public ExpressionBase NotEqual(int obj)
+        {
+            return new NotEqual(this, obj);
+        }
+
+        public ExpressionBase NotEqual(Decimal obj)
+        {
+            return new NotEqual(this, obj);
+        }
+
+        public ExpressionBase NotEqual(DateTime obj)
+        {
+            return new NotEqual(this, obj);
+        }
+
 
         public Not Not
         {
@@ -89,16 +140,64 @@ namespace FluentQuery
 
         #region override operators
 
-        public static IExpression operator ==
+        public static ExpressionBase operator ==
             (Field one, Field two)
         {
             return one.Equal(two);
         }
 
-        public static IExpression operator !=
+        public static ExpressionBase operator !=
             (Field one, Field two)
         {
-            return one.Not.Equal(two);
+            return one.NotEqual(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, string two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator !=
+            (Field one, string two)
+        {
+            return one.NotEqual(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, int two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator !=
+            (Field one, int two)
+        {
+            return one.NotEqual(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, decimal two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator !=
+            (Field one, decimal two)
+        {
+            return one.NotEqual(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, DateTime two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator !=
+            (Field one, DateTime two)
+        {
+            return one.Equal(two);
         }
 
         #endregion
