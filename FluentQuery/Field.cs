@@ -8,7 +8,7 @@ namespace FluentQuery
 {
     public struct Field : IProjection
     {
-        private Table _table;
+        public Table _table;
         private string _name;
         private string _alias;
 
@@ -43,6 +43,14 @@ namespace FluentQuery
             get
             {
                 return _name;
+            }
+        }
+
+        public Table Table
+        {
+            get
+            {
+                return _table;
             }
         }
 
@@ -102,6 +110,11 @@ namespace FluentQuery
             return new Equal(this, obj);
         }
 
+        public ExpressionBase Equal(bool obj)
+        {
+            return new Equal(this, obj);
+        }
+
         public ExpressionBase NotEqual(Field other)
         {
             return new NotEqual(this, other);
@@ -125,6 +138,11 @@ namespace FluentQuery
         public ExpressionBase NotEqual(DateTime obj)
         {
             return new NotEqual(this, obj);
+        }
+
+        public ExpressionBase NotEqual(bool obj)
+        {
+            return new Equal(this, obj);
         }
 
         public ExpressionBase LessThan(Field other)
@@ -294,6 +312,12 @@ namespace FluentQuery
             return one.Equal(two);
         }
 
+        public static ExpressionBase operator ==
+            (Field one, bool two)
+        {
+            return one.Equal(two);
+        }
+
         public static ExpressionBase operator !=
             (Field one, Field two)
         {
@@ -320,6 +344,12 @@ namespace FluentQuery
 
         public static ExpressionBase operator !=
             (Field one, DateTime two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator !=
+            (Field one, bool two)
         {
             return one.Equal(two);
         }
@@ -442,7 +472,7 @@ namespace FluentQuery
             (Field one, DateTime two)
         {
             return one.GreaterThanOrEqualTo(two);
-        }        
+        }
 
         #endregion
     }

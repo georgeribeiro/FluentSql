@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentQuery.Clause;
 using FluentQuery.Expression;
+using System.Collections;
 
 namespace FluentQuery
 {
@@ -12,6 +13,7 @@ namespace FluentQuery
         private IList<Field> _projects = new List<Field>();
         private IList<IJoin> _joins = new List<IJoin>();
         private IList<ExpressionBase> _wheres = new List<ExpressionBase>();
+        private Hashtable _params = new Hashtable();
         public string Name { get; set; }
         public string Alias { get; set; }
 
@@ -43,6 +45,40 @@ namespace FluentQuery
             }
         }
 
+        public string Param(string key, object obj)
+        {
+            string param = "";
+            IList<string> keys_in_params = new List<string>();
+            foreach (string k in _params.Keys)
+            {
+                if (k.Split('_')[0] + "_" + k.Split('_')[1] == key)
+                {
+                    keys_in_params.Add(k);
+                }
+            }
+            if (keys_in_params.Count > 0)
+            {
+                int n = Convert.ToInt32(keys_in_params.Last().Split('_')[2]) + 1;
+                param = key + "_" + n.ToString();
+                _params.Add(param, obj);
+                return param;
+            }
+            else
+            {
+                param = key + "_1";
+                _params.Add(param, obj);
+                return param;
+            }
+        }
+
+        public Hashtable Params
+        {
+            get
+            {
+                return _params;
+            }
+        }
+
         # region Methods
 
         public void Clear()
@@ -50,6 +86,7 @@ namespace FluentQuery
             _projects.Clear();
             _joins.Clear();
             _wheres.Clear();
+            _params.Clear();
         }
 
         #endregion

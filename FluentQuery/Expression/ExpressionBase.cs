@@ -36,6 +36,12 @@ namespace FluentQuery.Expression
             return one.And(two);
         }
 
+        public static ExpressionBase operator !
+            (ExpressionBase obj)
+        {
+            return new Not(obj);
+        }
+
         #endregion
     }
 }

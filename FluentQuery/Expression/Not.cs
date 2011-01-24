@@ -16,6 +16,11 @@ namespace FluentQuery.Expression
             _expression = null;
         }
 
+        public Not(ExpressionBase expression)
+        {
+            _expression = expression;
+        }
+
         public ExpressionBase Equal(Field other)
         {
             this._expression = _field.Equal(other);

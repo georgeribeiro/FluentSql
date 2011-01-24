@@ -55,7 +55,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users");
             users.Project(users.All).Where((users["nome"] == "george"));
-            Assert.AreEqual("SELECT users.* FROM users WHERE users.nome = 'george'", users.ToSql());  
+            Assert.AreEqual("SELECT users.* FROM users WHERE users.nome = @users_nome_1", users.ToSql());  
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users");
             users.Project(users.All).Where((users["nome"] == "george") | (users["id"] != 10));
-            Assert.AreEqual("SELECT users.* FROM users WHERE (users.nome = 'george') OR (users.id <> 10)", users.ToSql());
+            Assert.AreEqual("SELECT users.* FROM users WHERE (users.nome = @users_nome_1) OR (users.id <> @users_id_1)", users.ToSql());
         }
 
         [Test]
@@ -83,7 +83,7 @@ namespace FluentQuery.Test
             var users = new Table("users", "u");
             var groups = new Table("groups", "g");
             users.Project(users.All, groups.All).LeftJoin(groups, groups["id"] == users["group_id"]).Where(users["id"] == 1);
-            string sql_expected = "SELECT u.*, g.* FROM users AS u LEFT JOIN groups AS g ON g.id = u.group_id WHERE u.id = 1";
+            string sql_expected = "SELECT u.*, g.* FROM users AS u LEFT JOIN groups AS g ON g.id = u.group_id WHERE u.id = @users_id_1";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -93,7 +93,7 @@ namespace FluentQuery.Test
             var users = new Table("users", "u");
             var groups = new Table("groups", "g");
             users.Project(users.All, groups.All).InnerJoin(groups, groups["id"] == users["group_id"]).Where(users["id"] == 1 & users["nome"] != "george");
-            string sql_expected = "SELECT u.*, g.* FROM users AS u INNER JOIN groups AS g ON g.id = u.group_id WHERE (u.id = 1) AND (u.nome <> 'george')";
+            string sql_expected = "SELECT u.*, g.* FROM users AS u INNER JOIN groups AS g ON g.id = u.group_id WHERE (u.id = @users_id_1) AND (u.nome <> @users_nome_1)";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
         
@@ -102,7 +102,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users");
             users.Project(users["nome"]).Where(users["idade"] > 10).Where(users["idade"] < 20);
-            string sql_expected = "SELECT users.nome FROM users WHERE users.idade > 10 AND users.idade < 20";
+            string sql_expected = "SELECT users.nome FROM users WHERE users.idade > @users_idade_1 AND users.idade < @users_idade_2";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -111,7 +111,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users", "u");
             users.Project(users.All).Where((users["idade"] >= 10) & (users["idade"] <= 20));
-            string sql_expected = "SELECT u.* FROM users AS u WHERE (u.idade >= 10) AND (u.idade <= 20)";
+            string sql_expected = "SELECT u.* FROM users AS u WHERE (u.idade >= @users_idade_1) AND (u.idade <= @users_idade_2)";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -120,7 +120,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users");
             users.Project(users["nome"], users["senha"]).Where(users["nome"].Like("%n"));
-            string sql_expected = "SELECT users.nome, users.senha FROM users WHERE users.nome LIKE '%n'";
+            string sql_expected = "SELECT users.nome, users.senha FROM users WHERE users.nome LIKE @users_nome_1";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -129,7 +129,7 @@ namespace FluentQuery.Test
         {
             var users = new Table("users");
             users.Where(users["nome"].Not.Like("%n"));
-            string sql_expected = "SELECT * FROM users WHERE NOT users.nome LIKE '%n'";
+            string sql_expected = "SELECT * FROM users WHERE NOT users.nome LIKE @users_nome_1";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -140,6 +140,18 @@ namespace FluentQuery.Test
             users.Where(users["nome"].In(new string[] { "george", "ribeiro" }));
             string sql_expected = "SELECT * FROM users AS u WHERE u.nome IN ('george', 'ribeiro')";
             Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Fazer_Consulta_E_Ver_Parametros()
+        {
+            var users = new Table("users", "u");
+            var groups = new Table("groups", "g");
+            users.Project(users.All, groups["nome"]).LeftJoin(groups, groups["id"] == users["groups_id"]).Where(users["id"] > 10).Where(groups["id"] > 20);
+            string sql_expected = "SELECT u.*, g.nome FROM users AS u LEFT JOIN groups AS g ON g.id = u.groups_id WHERE u.id > @users_id_1 AND g.id > @groups_id_1";
+            Assert.AreEqual(sql_expected, users.ToSql());
+            Assert.AreEqual(users.Params["users_id_1"], 10);
+            Assert.AreEqual(groups.Params["groups_id_1"], 20);
         }
 
     }
