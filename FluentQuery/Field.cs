@@ -92,7 +92,7 @@ namespace FluentQuery
             return new Equal(this, obj);
         }
 
-        public ExpressionBase Equal(Decimal obj)
+        public ExpressionBase Equal(decimal obj)
         {
             return new Equal(this, obj);
         }
@@ -117,7 +117,7 @@ namespace FluentQuery
             return new NotEqual(this, obj);
         }
 
-        public ExpressionBase NotEqual(Decimal obj)
+        public ExpressionBase NotEqual(decimal obj)
         {
             return new NotEqual(this, obj);
         }
@@ -127,6 +127,130 @@ namespace FluentQuery
             return new NotEqual(this, obj);
         }
 
+        public ExpressionBase LessThan(Field other)
+        {
+            return new LessThan(this, other);
+        }
+
+        public ExpressionBase LessThan(string other)
+        {
+            return new LessThan(this, other);
+        }
+
+        public ExpressionBase LessThan(int other)
+        {
+            return new LessThan(this, other);
+        }
+
+        public ExpressionBase LessThan(decimal other)
+        {
+            return new LessThan(this, other);
+        }
+
+        public ExpressionBase LessThan(DateTime other)
+        {
+            return new LessThan(this, other);
+        }
+
+        public ExpressionBase LessThanOrEqualTo(Field other)
+        {
+            return new LessThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase LessThanOrEqualTo(string other)
+        {
+            return new LessThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase LessThanOrEqualTo(int other)
+        {
+            return new LessThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase LessThanOrEqualTo(decimal other)
+        {
+            return new LessThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase LessThanOrEqualTo(DateTime other)
+        {
+            return new LessThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase GreaterThan(Field other)
+        {
+            return new GreaterThan(this, other);
+        }
+
+        public ExpressionBase GreaterThan(string other)
+        {
+            return new GreaterThan(this, other);
+        }
+
+        public ExpressionBase GreaterThan(int other)
+        {
+            return new GreaterThan(this, other);
+        }
+
+        public ExpressionBase GreaterThan(decimal other)
+        {
+            return new GreaterThan(this, other);
+        }
+
+        public ExpressionBase GreaterThan(DateTime other)
+        {
+            return new GreaterThan(this, other);
+        }
+
+        public ExpressionBase GreaterThanOrEqualTo(Field other)
+        {
+            return new GreaterThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase GreaterThanOrEqualTo(string other)
+        {
+            return new GreaterThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase GreaterThanOrEqualTo(int other)
+        {
+            return new GreaterThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase GreaterThanOrEqualTo(decimal other)
+        {
+            return new GreaterThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase GreaterThanOrEqualTo(DateTime other)
+        {
+            return new GreaterThanOrEqualTo(this, other);
+        }
+
+        public ExpressionBase Like(string expression_like)
+        {
+            return new Like(this, expression_like);
+        }
+
+        public ExpressionBase In(string[] sequence)
+        {
+            return new In(this, sequence);
+        }
+
+        public ExpressionBase In(int[] sequence)
+        {
+            return new In(this, sequence);
+        }
+
+        public ExpressionBase In(decimal[] sequence)
+        {
+            return new In(this, sequence);
+        }
+
+        public ExpressionBase In(DateTime[] sequence)
+        {
+            return new In(this, sequence);
+        }
 
         public Not Not
         {
@@ -146,28 +270,40 @@ namespace FluentQuery
             return one.Equal(two);
         }
 
+        public static ExpressionBase operator ==
+            (Field one, string two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, int two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, decimal two)
+        {
+            return one.Equal(two);
+        }
+
+        public static ExpressionBase operator ==
+            (Field one, DateTime two)
+        {
+            return one.Equal(two);
+        }
+
         public static ExpressionBase operator !=
             (Field one, Field two)
         {
             return one.NotEqual(two);
         }
 
-        public static ExpressionBase operator ==
-            (Field one, string two)
-        {
-            return one.Equal(two);
-        }
-
         public static ExpressionBase operator !=
             (Field one, string two)
         {
             return one.NotEqual(two);
-        }
-
-        public static ExpressionBase operator ==
-            (Field one, int two)
-        {
-            return one.Equal(two);
         }
 
         public static ExpressionBase operator !=
@@ -176,29 +312,137 @@ namespace FluentQuery
             return one.NotEqual(two);
         }
 
-        public static ExpressionBase operator ==
-            (Field one, decimal two)
-        {
-            return one.Equal(two);
-        }
-
         public static ExpressionBase operator !=
             (Field one, decimal two)
         {
             return one.NotEqual(two);
         }
 
-        public static ExpressionBase operator ==
-            (Field one, DateTime two)
-        {
-            return one.Equal(two);
-        }
-
         public static ExpressionBase operator !=
             (Field one, DateTime two)
         {
             return one.Equal(two);
         }
+
+        public static ExpressionBase operator <
+            (Field one, Field two)
+        {
+            return one.LessThan(two);
+        }
+
+        public static ExpressionBase operator <
+            (Field one, string two)
+        {
+            return one.LessThan(two);
+        }
+
+        public static ExpressionBase operator <
+            (Field one, int two)
+        {
+            return one.LessThan(two);
+        }
+
+        public static ExpressionBase operator <
+            (Field one, decimal two)
+        {
+            return one.LessThan(two);
+        }
+
+        public static ExpressionBase operator <
+            (Field one, DateTime two)
+        {
+            return one.LessThan(two);
+        }
+
+        public static ExpressionBase operator <=
+            (Field one, Field two)
+        {
+            return one.LessThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator <=
+            (Field one, string two)
+        {
+            return one.LessThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator <=
+            (Field one, int two)
+        {
+            return one.LessThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator <=
+            (Field one, decimal two)
+        {
+            return one.LessThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator <=
+            (Field one, DateTime two)
+        {
+            return one.LessThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator >
+            (Field one, Field two)
+        {
+            return one.GreaterThan(two);
+        }
+
+        public static ExpressionBase operator >
+            (Field one, string two)
+        {
+            return one.GreaterThan(two);
+        }
+
+        public static ExpressionBase operator >
+            (Field one, int two)
+        {
+            return one.GreaterThan(two);
+        }
+
+        public static ExpressionBase operator >
+            (Field one, decimal two)
+        {
+            return one.GreaterThan(two);
+        }
+
+        public static ExpressionBase operator >
+            (Field one, DateTime two)
+        {
+            return one.GreaterThan(two);
+        }
+
+        public static ExpressionBase operator >=
+            (Field one, Field two)
+        {
+            return one.GreaterThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator >=
+            (Field one, string two)
+        {
+            return one.GreaterThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator >=
+            (Field one, int two)
+        {
+            return one.GreaterThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator >=
+            (Field one, decimal two)
+        {
+            return one.GreaterThanOrEqualTo(two);
+        }
+
+        public static ExpressionBase operator >=
+            (Field one, DateTime two)
+        {
+            return one.GreaterThanOrEqualTo(two);
+        }        
 
         #endregion
     }

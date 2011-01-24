@@ -52,6 +52,12 @@
     <Compile Include="Clause\JoinBase.cs" />
     <Compile Include="Clause\LeftJoin.cs" />
     <Compile Include="Clause\RightJoin.cs" />
+    <Compile Include="Expression\GreaterThan.cs" />
+    <Compile Include="Expression\GreaterThanOrEqualTo.cs" />
+    <Compile Include="Expression\In.cs" />
+    <Compile Include="Expression\LessThan.cs" />
+    <Compile Include="Expression\LessThanOrEqualTo.cs" />
+    <Compile Include="Expression\Like.cs" />
     <Compile Include="Expression\NotEqual.cs" />
     <Compile Include="Expression\LogicOperatorAnd.cs" />
     <Compile Include="Expression\Equal.cs" />
