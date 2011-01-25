@@ -50,5 +50,10 @@ namespace FluentQuery.Expression
             string param = one._table.Param(String.Format("{0}_{1}", one.Table.Name, one.Name), two);
             Two = "@" + param;
         }
+
+        public override string ToString()
+        {
+            return ToSql();
+        }
     }
 }

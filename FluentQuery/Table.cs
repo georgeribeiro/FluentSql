@@ -13,7 +13,7 @@ namespace FluentQuery
         private IList<Field> _projects = new List<Field>();
         private IList<IJoin> _joins = new List<IJoin>();
         private IList<ExpressionBase> _wheres = new List<ExpressionBase>();
-        private Hashtable _params = new Hashtable();
+        private readonly Hashtable _params = new Hashtable();
         public string Name { get; set; }
         public string Alias { get; set; }
 
@@ -45,21 +45,18 @@ namespace FluentQuery
             }
         }
 
-        public string Param(string key, object obj)
+        internal string Param(string key, object obj)
         {
             string param = "";
-            IList<string> keys_in_params = new List<string>();
+            int count = 0;
             foreach (string k in _params.Keys)
             {
                 if (k.Split('_')[0] + "_" + k.Split('_')[1] == key)
-                {
-                    keys_in_params.Add(k);
-                }
+                    count++;
             }
-            if (keys_in_params.Count > 0)
+            if (count > 0)
             {
-                int n = Convert.ToInt32(keys_in_params.Last().Split('_')[2]) + 1;
-                param = key + "_" + n.ToString();
+                param = key + "_" + (++count).ToString();
                 _params.Add(param, obj);
                 return param;
             }

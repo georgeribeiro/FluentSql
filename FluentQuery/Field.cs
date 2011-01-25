@@ -6,7 +6,7 @@ using FluentQuery.Expression;
 
 namespace FluentQuery
 {
-    public struct Field : IProjection
+    public struct Field
     {
         public Table _table;
         private string _name;
@@ -22,6 +22,11 @@ namespace FluentQuery
         public override int GetHashCode()
         {
             return this.Project.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj.GetHashCode() == this.GetHashCode();
         }
 
         public Field As(string alias)

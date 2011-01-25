@@ -42,6 +42,11 @@ namespace FluentQuery.Expression
             return new Not(obj);
         }
 
+        public override string ToString()
+        {
+            return ToSql();
+        }
+
         #endregion
     }
 }

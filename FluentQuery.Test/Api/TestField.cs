@@ -26,5 +26,20 @@ namespace FluentQuery.Test.Api
             Assert.AreEqual("users.nome", f.Project);
             Assert.NotNull(f.Alias);
         }
+
+
+        [Test]
+        public void Sobrecarga_De_Operadores_Maior_Menor()
+        {
+            var t = new Table("users");
+            var f1 = t["data"];
+            var f2 = t["nome"];
+            var f3 = t["idade"];
+            Assert.AreEqual("users.nome LIKE @users_nome_1", (f2.Like("a%")).ToSql());
+            Assert.AreEqual("users.data > @users_data_1", (f1 > new DateTime(1989, 8, 22)).ToSql());
+            Assert.AreEqual("users.data < @users_data_2", (f1 < DateTime.Now).ToSql());
+            Assert.AreEqual("(users.idade <= @users_idade_1) AND (users.idade >= @users_idade_2)", ((f3 <= 20) & (f3 >= 10)).ToSql());
+            Assert.AreEqual("(users.idade > @users_idade_3) OR (users.idade < @users_idade_4)", ((f3 > 10) | (f3 < 20)).ToSql());
+        }
     }
 }
