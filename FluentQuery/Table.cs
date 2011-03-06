@@ -3,37 +3,69 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentQuery.Clause;
-using FluentQuery.Expression;
+using FluentQuery.Expressions;
 using System.Collections;
+using FluentQuery.Command;
 
 namespace FluentQuery
 {
-    public class Table
+    public class Table<T> : ITable where T:ICommand
     {
-        private IList<Field> _projects = new List<Field>();
-        private IList<IJoin> _joins = new List<IJoin>();
-        private IList<ExpressionBase> _wheres = new List<ExpressionBase>();
+        private ICommand _command = null;
         private readonly Hashtable _params = new Hashtable();
+        private IList<Field> _fields = new List<Field>();
+
         public string Name { get; set; }
         public string Alias { get; set; }
 
+        private void InitializeCommand() 
+        {
+            if (typeof(T) == typeof(Select))
+            {
+                _command = new Select(this);
+            }
+            else if (typeof(T) == typeof(Update))
+            {
+                _command = new Update(this);
+            }
+            else if (typeof(T) == typeof(Insert))
+            {
+                _command = new Insert(this);
+            }
+            else if (typeof(T) == typeof(Delete))
+            {
+                _command = new Delete(this);
+            }
+        }
+
         public Table(string name)
         {
-            Name = name;
+            this.Name = name;
+            InitializeCommand();
         }
 
         public Table(string name, string alias)
         {
             Name = name;
             Alias = alias;
+            this._command = new Select(this);
         }
 
         public Field this[string name]
         {
             get
             {
-                var field = from f in _projects where f.Name == name select f;
-                return field.Count() > 0 ? (Field)field.Single() : new Field(this, name);
+                var fields = from f in _fields where f.Name == name select f;
+                if (fields.Count() > 0)
+                {
+                    return fields.Single();
+                }
+                else
+                {
+                    Field f = new Field(this, name);
+                    _fields.Add(f);
+                    return f;
+                }
             }
         }
 
@@ -41,11 +73,11 @@ namespace FluentQuery
         {
             get
             {
-                return new Field(this, "*");
+                return this["*"];
             }
         }
 
-        internal string Param(string key, object obj)
+        public string AddParam(string key, object obj)
         {
             string param = "";
             int count = 0;
@@ -68,6 +100,11 @@ namespace FluentQuery
             }
         }
 
+        public string ToSql()
+        {
+            return _command.ToSql();
+        }
+
         public Hashtable Params
         {
             get
@@ -76,107 +113,81 @@ namespace FluentQuery
             }
         }
 
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         # region Methods
 
         public void Clear()
         {
-            _projects.Clear();
-            _joins.Clear();
-            _wheres.Clear();
-            _params.Clear();
+            InitializeCommand();
         }
 
         #endregion
 
-        #region Clauses Members
+        #region Select members
 
-        public string ToSql()
+        public ITable Project(params Field[] fields)
         {
-            return String.Format("SELECT {0} {1}{2}{3}", BuildSelect(), BuildFrom(), BuildJoin(), BuildWhere());
-        }
-
-        public Table Project(params Field[] fields)
-        {
-            foreach (Field item in fields)
-            {
-                _projects.Add(item);
-            }
+            _command.Project(fields);
             return this;
         }
 
-        public Table Join(Table table, ExpressionBase expression)
+        public ITable Join(ITable table, IExpression expression)
         {
-            _joins.Add(new Join(table, expression));
+            _command.Join(table, expression);
             return this;
         }
 
-        public Table LeftJoin(Table table, ExpressionBase expresssion)
+        public ITable LeftJoin(ITable table, IExpression expresssion)
         {
-            _joins.Add(new LeftJoin(table, expresssion));
+            _command.LeftJoin(table, expresssion);
             return this;
         }
 
-        public Table RightJoin(Table table, ExpressionBase expression)
+        public ITable RightJoin(ITable table, IExpression expression)
         {
-            _joins.Add(new RightJoin(table, expression));
+            _command.RightJoin(table, expression);
             return this;
         }
 
-        public Table InnerJoin(Table table, ExpressionBase expression)
+        public ITable InnerJoin(ITable table, IExpression expression)
         {
-            _joins.Add(new InnerJoin(table, expression));
+            _command.InnerJoin(table, expression);
             return this;
         }
 
-        public Table Where(ExpressionBase expression)
+        public ITable Where(IExpression expression)
         {
-            this._wheres.Add(expression);
+            _command.Where(expression);
+            return this;
+        }
+
+        public ITable GroupBy(Field field)
+        {
+            _command.GroupBy(field);
             return this;
         }
 
         #endregion
 
-        #region private members
-
-        private string BuildSelect()
+        public ITable Insert(object values)
         {
-            if (_projects.Count == 0)
-            {
-                return "*";
-            }
-            return String.Join(", ", (from f in _projects select f.ToSql()).ToArray());
+            _command.Values(values);
+            return this;
         }
 
-        private string BuildJoin()
+        public ITable Update(object values)
         {
-            if (_joins.Count > 0)
-            {
-                return " " + String.Join(" ", (from j in _joins select j.ToSql()).ToArray());
-            }
-            else
-            {
-                return String.Empty;
-            }
+            _command.Values(values);
+            return this;
         }
 
-        private string BuildFrom()
+        public ITable Delete()
         {
-            if (!string.IsNullOrEmpty(Alias))
-            {
-                return String.Format("FROM {0} AS {1}", Name, Alias);
-            } 
-            return String.Format("FROM {0}", Name);
+            throw new NotImplementedException();
         }
-
-        private string BuildWhere()
-        {
-            if (_wheres.Count > 0)
-            {
-                return " WHERE " + string.Join(" AND ", (from e in _wheres select e.ToSql()).ToArray());
-            }
-            return string.Empty;
-        }
-
-        #endregion
     }
 }

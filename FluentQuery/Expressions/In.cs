@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FluentQuery.Expression
+namespace FluentQuery.Expressions
 {
-    public class In : ExpressionBase
+    public class In : Expression
     {
         private Field _one;
         private string[] _sequence;
@@ -15,19 +15,7 @@ namespace FluentQuery.Expression
             _sequence = (from s in sequence select String.Format("'{0}'", s)).ToArray();
         }
 
-        public In(Field field, int[] sequence)
-        {
-            _one = field;
-            _sequence = (from s in sequence select s.ToString()).ToArray();
-        }
-
-        public In(Field field, decimal[] sequence)
-        {
-            _one = field;
-            _sequence = (from s in sequence select s.ToString()).ToArray();
-        }
-
-        public In(Field field, DateTime[] sequence)
+        public In(Field field, object[] sequence)
         {
             _one = field;
             _sequence = (from s in sequence select s.ToString()).ToArray();
@@ -40,7 +28,7 @@ namespace FluentQuery.Expression
 
         private string BuildSequence(string[] sequence)
         {
-            return string.Join(", ", sequence);
+                return string.Join(", ", sequence);
         }
 
         private string FieldToString(Field f)

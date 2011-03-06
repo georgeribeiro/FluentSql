@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using FluentQuery.Expression;
+using FluentQuery.Expressions;
 
 namespace FluentQuery.Clause
 {
     public class JoinBase : IJoin
     {
-        protected Table Table { get; set; }
-        protected ExpressionBase Expression { get; set; }
+        protected ITable Table { get; set; }
+        protected IExpression Expression { get; set; }
         protected virtual string Clause
         {
             get
@@ -18,7 +18,7 @@ namespace FluentQuery.Clause
             }
         }
 
-        public JoinBase(Table table, ExpressionBase expression)
+        public JoinBase(ITable table, IExpression expression)
         {
             Table = table;
             Expression = expression;

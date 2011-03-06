@@ -53,6 +53,9 @@
     <Compile Include="Api\TestTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ComplexQuery.cs" />
+    <Compile Include="QuereyDelete.cs" />
+    <Compile Include="QueryInsert.cs" />
+    <Compile Include="QueryUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FluentQuery\FluentQuery.csproj">

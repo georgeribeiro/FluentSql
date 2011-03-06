@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FluentQuery.Expression
+namespace FluentQuery.Expressions
 {
-    public class ExpressionBase
+    public class Expression : IExpression
     {
         #region IExpression Members
 
@@ -14,32 +14,32 @@ namespace FluentQuery.Expression
             throw new NotImplementedException();
         }
 
-        public ExpressionBase Or(ExpressionBase other)
+        public Expression Or(Expression other)
         {
             return new LogicOperatorOr(this, other);
         }
 
-        public ExpressionBase And(ExpressionBase other)
+        public Expression And(Expression other)
         {
             return new LogicOperatorAnd(this, other);
         }
 
-        public static ExpressionBase operator |
-            (ExpressionBase one, ExpressionBase two)
+        public static Expression operator |
+            (Expression one, Expression two)
         {
             return one.Or(two);
         }
 
-        public static ExpressionBase operator &
-            (ExpressionBase one, ExpressionBase two)
+        public static Expression operator &
+            (Expression one, Expression two)
         {
             return one.And(two);
         }
 
-        public static ExpressionBase operator !
-            (ExpressionBase obj)
+        public static Expression operator !
+            (Expression expression)
         {
-            return new Not(obj);
+            return new Not(expression);
         }
 
         public override string ToString()

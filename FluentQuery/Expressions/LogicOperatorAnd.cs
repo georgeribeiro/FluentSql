@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FluentQuery.Expression
+namespace FluentQuery.Expressions
 {
-    public class LogicOperatorOr : ExpressionBase
+    class LogicOperatorAnd : Expression
     {
-        private ExpressionBase _one;
-        private ExpressionBase _two;
+        private Expression _one;
+        private Expression _two;
 
-        public LogicOperatorOr(ExpressionBase one, ExpressionBase two)
+        public LogicOperatorAnd(Expression one, Expression two)
         {
             _one = one;
             _two = two;
@@ -20,7 +20,7 @@ namespace FluentQuery.Expression
 
         public override string ToSql()
         {
-            return string.Format("({0}) OR ({1})", _one.ToSql(), _two.ToSql());
+            return string.Format("({0}) AND ({1})", _one.ToSql(), _two.ToSql());
         }
 
         #endregion
