@@ -87,13 +87,13 @@ namespace FluentSql.Expressions
             return this;
         }
 
-        public IExpression In(string[] sequence)
+        public IExpression In(params string[] sequence)
         {
             this._expression = _field.In(sequence);
             return this;
         }
 
-        public IExpression In(object[] sequence)
+        public IExpression In(params object[] sequence)
         {
             this._expression = _field.In(sequence);
             return this;

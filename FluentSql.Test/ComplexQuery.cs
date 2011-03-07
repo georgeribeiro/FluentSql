@@ -150,7 +150,7 @@ namespace FluentSql.Test
         public void Fazer_Consulta_Com_In()
         {
             var users = new Table("users", "u");
-            users.Where(users["nome"].In(new string[] { "george", "ribeiro" }));
+            users.Where(users["nome"].In("george", "ribeiro"));
             string sql_expected = "SELECT * FROM users AS u WHERE u.nome IN ('george', 'ribeiro')";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
@@ -188,7 +188,7 @@ namespace FluentSql.Test
         public void Usar_Mais_De_Um_Join_Na_Query()
         {
             var clientes = new Table("clientes", "c");
-            var vendas = new Table("vendas", "v");
+            ITable vendas = new Table("vendas", "v");
             var produtos = new Table("produtos", "p");
             vendas.Project(vendas["data"], produtos["descricao"], clientes["nome"])
                 .LeftJoin(clientes).On(clientes["id"] == vendas["cliente_id"])
@@ -261,8 +261,8 @@ namespace FluentSql.Test
             group.AddPermissao("can_add_user");
             group.AddPermissao("can_remove_user");
             group.AddUser(user);
-            var t_users = new Table("users");
-            var t_groups = new Table("groups");
+            ITable t_users = new Table("users");
+            ITable t_groups = new Table("groups");
             t_users.Project(t_users["nome"], t_groups["descricao"])
                 .Join(t_groups).On(t_users["group_id"] == t_groups["id"]);
             if (!string.IsNullOrEmpty(user.Nome))
@@ -294,7 +294,7 @@ namespace FluentSql.Test
         [Test]
         public void Usar_In_Sem_Ser_Array_De_String()
         {
-            var users = new Table("users");
+            ITable users = new Table("users");
             users.Project(users.All)
                 .Where(users["permissoes"].In("can_remove_user", "can_add_user"));
             string sql_expected = "SELECT users.* FROM users WHERE users.permissoes IN ('can_remove_user', 'can_add_user')";

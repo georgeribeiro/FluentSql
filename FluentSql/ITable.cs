@@ -11,6 +11,8 @@ namespace FluentSql
 {
     public interface ITable
     {
+        Field this[string name] { get; }
+        Field All { get; }
         string ToSql();
         string Name { get; }
         string Alias { get; }
