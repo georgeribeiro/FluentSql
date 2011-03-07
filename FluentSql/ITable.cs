@@ -12,8 +12,8 @@ namespace FluentSql
     public interface ITable
     {
         string ToSql();
-        string Name { get; set; }
-        string Alias { get; set; }
+        string Name { get; }
+        string Alias { get; }
         string AddParam(string key, object obj);
         Hashtable Params { get; }
         void Clear();

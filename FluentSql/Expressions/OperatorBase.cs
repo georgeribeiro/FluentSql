@@ -33,7 +33,7 @@ namespace FluentSql.Expressions
         public OperatorBase(Field one, object two)
         {
             One = FieldToString(one);
-            string param = one.Table.AddParam(String.Format("{0}_{1}", one.Table.Name, one.Name), two);
+            string param = one.Table.AddParam(one.Name, two);
             Two = "@" + param;
         }
 

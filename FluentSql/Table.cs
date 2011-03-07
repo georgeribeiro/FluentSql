@@ -15,8 +15,8 @@ namespace FluentSql
         private readonly Hashtable _params = new Hashtable();
         private IList<Field> _fields = new List<Field>();
 
-        public string Name { get; set; }
-        public string Alias { get; set; }
+        public string Name { get; private set; }
+        public string Alias { get; private set; }
 
         public Table(string name)
         {
@@ -60,24 +60,16 @@ namespace FluentSql
         public string AddParam(string key, object obj)
         {
             string param = "";
+            string format_param = "{0}_{1}_{2}";
             int count = 0;
             foreach (string k in _params.Keys)
             {
-                if (k.Split('_')[0] + "_" + k.Split('_')[1] == key)
+                if (k.Split('_')[1] == key)
                     count++;
             }
-            if (count > 0)
-            {
-                param = key + "_" + (++count).ToString();
-                _params.Add(param, obj);
-                return param;
-            }
-            else
-            {
-                param = key + "_1";
-                _params.Add(param, obj);
-                return param;
-            }
+            param = String.Format(format_param, Name, key, (count > 0 ? (++count) : 1).ToString());
+            _params.Add(param, obj);
+            return param;
         }
 
         public string ToSql()
@@ -99,16 +91,13 @@ namespace FluentSql
         }
 
         # region Methods
-
         public void Clear()
         {
             _command = new Select(this);
         }
-
         #endregion
 
-        #region Select members
-
+        #region ITable members
         public ITable Project(params Field[] fields)
         {
             _command.Project(fields);
@@ -151,8 +140,6 @@ namespace FluentSql
             return this;
         }
 
-        #endregion
-
         public ITable Insert(object values)
         {
             _command = new Insert(this);
@@ -172,5 +159,6 @@ namespace FluentSql
             _command = new Delete(this, _command.Wheres);
             return this;
         }
+        #endregion
     }
 }

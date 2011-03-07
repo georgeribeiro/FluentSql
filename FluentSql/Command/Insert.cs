@@ -87,7 +87,7 @@ namespace FluentSql.Command
             IDictionary<string, object> keyvalue = Utils.Params.ObjectToDicionary(values);
             foreach (KeyValuePair<string, object> kvp in keyvalue)
             {
-                FieldValues.Add(kvp.Key, Table.AddParam(string.Format("{0}_{1}", Table.Name, kvp.Key), kvp.Value));
+                FieldValues.Add(kvp.Key, Table.AddParam(kvp.Key, kvp.Value));
             }
             return this;
         }
