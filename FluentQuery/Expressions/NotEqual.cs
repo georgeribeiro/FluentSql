@@ -13,6 +13,10 @@ namespace FluentQuery.Expressions
 
         public override string ToSql()
         {
+            if (Two == null)
+            {
+                return string.Format("{0} IS NOT NULL", One);
+            }
             return string.Format("{0} <> {1}", One, Two);
         }
     }

@@ -20,7 +20,14 @@ namespace FluentQuery.Expressions
         public OperatorBase(Field one, Field two)
         {
             One = FieldToString(one);
-            Two = FieldToString(two);
+            try
+            {
+                Two = FieldToString(two);
+            }
+            catch (NullReferenceException)
+            {
+                Two = null;
+            }
         }
 
         public OperatorBase(Field one, object two)

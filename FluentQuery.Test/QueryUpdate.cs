@@ -13,7 +13,7 @@ namespace FluentQuery.Test
         [Test]
         public void Update_Sem_Where()
         {
-            ITable users = new Table<Update>("users");
+            ITable users = new Table("users");
             users.Update(new
             {
                 ativo=true
@@ -26,7 +26,7 @@ namespace FluentQuery.Test
         [Test]
         public void Update_Com_Where()
         {
-            var users = new Table<Update>("users");
+            var users = new Table("users");
             users.Update(new 
             { 
                 ativo=true, 
@@ -40,7 +40,7 @@ namespace FluentQuery.Test
         [Test]
         public void Update_Com_Where_Primeiro()
         {
-            var users = new Table<Update>("users");
+            var users = new Table("users");
             users.Where(users["idade"] > 20)
             .Update(new
             {

@@ -8,35 +8,41 @@ using System.Collections;
 
 namespace FluentQuery.Command
 {
-    public class Select : ICommand
+    internal class Select : ICommand
     {
-        private IList<Field> Projects = new List<Field>();
-        private IList<IJoin> Joins = new List<IJoin>();
-        private IList<IExpression> Wheres = new List<IExpression>();
-        private IList<GroupBy> GroupBys = new List<GroupBy>();
-
-        protected ITable Table { get; set; }
-
         public Select(ITable table)
         {
             this.Table = table;
+            this.Projects = new List<Field>();
+            this.Joins = new List<IJoin>();
+            this.Wheres = new List<IExpression>();
+            this.GroupBys = new List<GroupBy>();
         }
 
         #region ICommand Members
-        public virtual void Clear()
+        public IList<Field> Projects { get; set; }
+        public IList<IJoin> Joins { get; set; }
+        public IList<IExpression> Wheres { get; set; }
+        public IList<GroupBy> GroupBys { get; set; }
+        public IDictionary<string, object> FieldValues
         {
-            Projects.Clear();
-            Joins.Clear();
-            Wheres.Clear();
-            GroupBys.Clear();
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");   
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
         }
-
-        public virtual string ToSql()
+        public ITable Table { get; set; }
+        
+        public string ToSql()
         {
             return String.Format("SELECT {0} {1}{2}{3}{4}", BuildProject(), BuildFrom(), BuildJoin(), BuildWhere(), BuildGroupBy());
         }
 
-        public virtual ICommand Project(params Field[] fields)
+        public ICommand Project(params Field[] fields)
         {
             foreach (Field item in fields)
             {
@@ -45,50 +51,54 @@ namespace FluentQuery.Command
             return this;
         }
 
-        public virtual ICommand Join(ITable table, IExpression expression)
+        public IJoin Join(ITable table)
         {
-            Joins.Add(new Join(table, expression));
-            return this;
+            IJoin j = new Join(Table, table);
+            Joins.Add(j);
+            return j;
         }
 
-        public virtual ICommand LeftJoin(ITable table, IExpression expresssion)
+        public IJoin LeftJoin(ITable table)
         {
-            Joins.Add(new LeftJoin(table, expresssion));
-            return this;
+            IJoin j = new LeftJoin(Table, table);
+            Joins.Add(j);
+            return j;
         }
 
-        public virtual ICommand RightJoin(ITable table, IExpression expression)
+        public IJoin RightJoin(ITable table)
         {
-            Joins.Add(new RightJoin(table, expression));
-            return this;
+            IJoin j = new RightJoin(Table, table);
+            Joins.Add(j);
+            return j;
         }
 
-        public virtual ICommand InnerJoin(ITable table, IExpression expression)
+        public IJoin InnerJoin(ITable table)
         {
-            Joins.Add(new InnerJoin(table, expression));
-            return this;
+            IJoin j = new InnerJoin(Table, table);
+            Joins.Add(j);
+            return j;
         }
 
-        public virtual ICommand Where(IExpression expression)
+        public ICommand Where(IExpression expression)
         {
             Wheres.Add(expression);
             return this;
         }
 
-        public virtual ICommand GroupBy(Field field)
+        public ICommand GroupBy(Field field)
         {
             GroupBys.Add(new GroupBy(field));
             return this;
         }
 
-        public virtual ICommand Values(object values)
+        public ICommand Values(object values)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
         #endregion
 
         #region Build Members
-        protected string BuildProject()
+        private string BuildProject()
         {
             if (Projects.Count == 0)
             {
@@ -97,7 +107,7 @@ namespace FluentQuery.Command
             return String.Join(", ", (from f in Projects select f.ToSql()).ToArray());
         }
 
-        protected string BuildJoin()
+        private string BuildJoin()
         {
             if (Joins.Count > 0)
             {
@@ -106,7 +116,7 @@ namespace FluentQuery.Command
             return String.Empty;
         }
 
-        protected string BuildFrom()
+        private string BuildFrom()
         {
             if (!string.IsNullOrEmpty(Table.Alias))
             {
@@ -115,7 +125,7 @@ namespace FluentQuery.Command
             return String.Format("FROM {0}", Table.Name);
         }
 
-        protected string BuildWhere()
+        private string BuildWhere()
         {
             if (Wheres.Count > 0)
             {
@@ -124,7 +134,7 @@ namespace FluentQuery.Command
             return string.Empty;
         }
 
-        protected string BuildGroupBy()
+        private string BuildGroupBy()
         {
             if (GroupBys.Count > 0)
             {

@@ -3,53 +3,83 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentQuery.Expressions;
+using FluentQuery.Clause;
 
 namespace FluentQuery.Command
 {
     public class Delete : ICommand
     {
-        private IList<IExpression> Wheres = new List<IExpression>();
-        public ITable Table { get; set; }
-
-        public Delete(ITable table)
+        public Delete(ITable table, IList<IExpression> wheres)
         {
-            Table = table;
+            this.Table = table;
+            this.Wheres = wheres;
         }
         #region ICommand Members
+        public IList<Field> Projects
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+        }
+        public IList<IJoin> Joins
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+        }
+        public IList<IExpression> Wheres { get; set; }
+        public IList<GroupBy> GroupBys
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+        }
+        public IDictionary<string, object> FieldValues { get; set; }
+        public ITable Table { get; set; }
 
         public string ToSql()
         {
             return String.Format("DELETE FROM {0}{1}", Table.Name, BuildWhere());
         }
 
-        public void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
         public ICommand Project(params Field[] fields)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand Join(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin Join(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand LeftJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin LeftJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand RightJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin RightJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand InnerJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin InnerJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         public ICommand Where(FluentQuery.Expressions.IExpression expression)
@@ -60,12 +90,12 @@ namespace FluentQuery.Command
 
         public ICommand GroupBy(Field field)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         public ICommand Values(object values)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         #endregion

@@ -8,7 +8,7 @@ namespace FluentQuery.Clause
 {
     public class Join : JoinBase
     {
-        public Join(ITable table, IExpression expression) : base(table, expression) { }
+        public Join(ITable table, ITable tableJoin) : base(table, tableJoin) { }
 
         protected override string Clause
         {

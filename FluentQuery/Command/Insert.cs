@@ -3,86 +3,133 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Collections;
+using FluentQuery.Clause;
+using FluentQuery.Expressions;
 
 namespace FluentQuery.Command
 {
     public class Insert : ICommand
     {
-        public ITable _table;
-
-        private IDictionary<string, object> _fields_values = new Dictionary<string, object>();
         public Insert(ITable table)
         {
-            _table = table;
+            this.Table = table;
+            this.FieldValues = new Dictionary<string, object>();
         }
 
         #region Build Members
         private string BuildFields()
         {
-            return string.Join(", ", _fields_values.Keys.ToArray());
+            return string.Join(", ", FieldValues.Keys.ToArray());
         }
 
         private string BuildValues()
         {
-            return string.Join(", ", (from f in _fields_values.Values select String.Format("@{0}", f)).ToArray());
+            return string.Join(", ", (from f in FieldValues.Values select String.Format("@{0}", f)).ToArray());
         }
         #endregion
 
         #region ICommand Members
+        public IList<Field> Projects
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
 
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+        }
+        public IList<IJoin> Joins
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+        }
+        public IList<IExpression> Wheres
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+        }
+        public IList<GroupBy> GroupBys
+        {
+            get
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+            }
+            set
+            {
+                throw new NotSupportedException("Clause don't supported by command.");
+
+            }
+        }
+        public IDictionary<string, object> FieldValues { get; set; }
+        public ITable Table { get; set; }
         public ICommand Values(object values)
         {
             IDictionary<string, object> keyvalue = Utils.Params.ObjectToDicionary(values);
             foreach (KeyValuePair<string, object> kvp in keyvalue)
             {
-                _fields_values.Add(kvp.Key, _table.AddParam(string.Format("{0}_{1}", _table.Name, kvp.Key), kvp.Value));
+                FieldValues.Add(kvp.Key, Table.AddParam(string.Format("{0}_{1}", Table.Name, kvp.Key), kvp.Value));
             }
             return this;
         }
         
         public string ToSql()
         {
-            return string.Format("INSERT INTO {0}({1}) VALUES({2})", _table.Name, BuildFields(), BuildValues());
-        }
-
-        public void Clear()
-        {
-            throw new NotImplementedException();
+            return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table.Name, BuildFields(), BuildValues());
         }
 
         public ICommand Project(params Field[] fields)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand Join(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin Join(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand LeftJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin LeftJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand RightJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin RightJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand InnerJoin(ITable table, FluentQuery.Expressions.IExpression expression)
+        public IJoin InnerJoin(ITable table)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         public ICommand Where(FluentQuery.Expressions.IExpression expression)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         public ICommand GroupBy(Field field)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         #endregion

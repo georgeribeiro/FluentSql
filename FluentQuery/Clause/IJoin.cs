@@ -8,6 +8,6 @@ namespace FluentQuery.Clause
 {
     public interface IJoin : IClause
     {
-        
+        ITable On(IExpression expression);    
     }
 }

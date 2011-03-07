@@ -8,7 +8,7 @@ namespace FluentQuery.Clause
 {
     class LeftJoin : JoinBase
     {
-        public LeftJoin(ITable table, IExpression expression) : base(table, expression) { }
+        public LeftJoin(ITable table, ITable tableJoin) : base(table, tableJoin) { }
 
         protected override string Clause
         {

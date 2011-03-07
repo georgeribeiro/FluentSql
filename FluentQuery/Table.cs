@@ -9,7 +9,7 @@ using FluentQuery.Command;
 
 namespace FluentQuery
 {
-    public class Table<T> : ITable where T:ICommand
+    public class Table : ITable
     {
         private ICommand _command = null;
         private readonly Hashtable _params = new Hashtable();
@@ -18,30 +18,10 @@ namespace FluentQuery
         public string Name { get; set; }
         public string Alias { get; set; }
 
-        private void InitializeCommand() 
-        {
-            if (typeof(T) == typeof(Select))
-            {
-                _command = new Select(this);
-            }
-            else if (typeof(T) == typeof(Update))
-            {
-                _command = new Update(this);
-            }
-            else if (typeof(T) == typeof(Insert))
-            {
-                _command = new Insert(this);
-            }
-            else if (typeof(T) == typeof(Delete))
-            {
-                _command = new Delete(this);
-            }
-        }
-
         public Table(string name)
         {
             this.Name = name;
-            InitializeCommand();
+            _command = new Select(this);
         }
 
         public Table(string name, string alias)
@@ -122,7 +102,7 @@ namespace FluentQuery
 
         public void Clear()
         {
-            InitializeCommand();
+            _command = new Select(this);
         }
 
         #endregion
@@ -135,28 +115,28 @@ namespace FluentQuery
             return this;
         }
 
-        public ITable Join(ITable table, IExpression expression)
+        public IJoin Join(ITable table)
         {
-            _command.Join(table, expression);
-            return this;
+            IJoin j = _command.Join(table);
+            return j;
         }
 
-        public ITable LeftJoin(ITable table, IExpression expresssion)
+        public IJoin LeftJoin(ITable table)
         {
-            _command.LeftJoin(table, expresssion);
-            return this;
+            IJoin j = _command.LeftJoin(table);
+            return j;
         }
 
-        public ITable RightJoin(ITable table, IExpression expression)
+        public IJoin RightJoin(ITable table)
         {
-            _command.RightJoin(table, expression);
-            return this;
+            IJoin j = _command.RightJoin(table);
+            return j;
         }
 
-        public ITable InnerJoin(ITable table, IExpression expression)
+        public IJoin InnerJoin(ITable table)
         {
-            _command.InnerJoin(table, expression);
-            return this;
+            IJoin j = _command.InnerJoin(table);
+            return j;
         }
 
         public ITable Where(IExpression expression)
@@ -175,19 +155,22 @@ namespace FluentQuery
 
         public ITable Insert(object values)
         {
+            _command = new Insert(this);
             _command.Values(values);
             return this;
         }
 
         public ITable Update(object values)
         {
+            _command = new Update(this, _command.Wheres);
             _command.Values(values);
             return this;
         }
 
         public ITable Delete()
         {
-            throw new NotImplementedException();
+            _command = new Delete(this, _command.Wheres);
+            return this;
         }
     }
 }

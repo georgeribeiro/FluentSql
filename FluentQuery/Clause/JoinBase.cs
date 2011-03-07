@@ -9,6 +9,7 @@ namespace FluentQuery.Clause
     public class JoinBase : IJoin
     {
         protected ITable Table { get; set; }
+        private ITable TableJoin { get; set; }
         protected IExpression Expression { get; set; }
         protected virtual string Clause
         {
@@ -18,21 +19,28 @@ namespace FluentQuery.Clause
             }
         }
 
-        public JoinBase(ITable table, IExpression expression)
+        public JoinBase(ITable table, ITable tableJoin)
         {
             Table = table;
-            Expression = expression;
+            TableJoin = tableJoin;
         }
+
+        public ITable On(IExpression expression)
+        {
+            Expression = expression;
+            return Table;
+        }
+
 
         #region IClause Members
 
         public virtual string ToSql()
         {
-            if (!string.IsNullOrEmpty(Table.Alias))
+            if (!string.IsNullOrEmpty(TableJoin.Alias))
             {
-                return string.Format("{0} {1} AS {2} ON {3}", Clause, Table.Name, Table.Alias, Expression.ToSql());
+                return string.Format("{0} {1} AS {2} ON {3}", Clause, TableJoin.Name, TableJoin.Alias, Expression.ToSql());
             }
-            return string.Format("{0} {1} ON {2}", Clause, Table.Name, Expression.ToSql());
+            return string.Format("{0} {1} ON {2}", Clause, TableJoin.Name, Expression.ToSql());
         }
 
         #endregion

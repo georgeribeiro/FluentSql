@@ -13,7 +13,7 @@ namespace FluentQuery.Test.Api
         [Test]
         public void Criar_Field_Sem_Alias()
         {
-            var f = new Field(new Table<Select>("users"), "nome");
+            var f = new Field(new Table("users"), "nome");
             Assert.AreEqual("users.nome", f.ToSql());
             Assert.AreEqual("users.nome", f.Project);
             Assert.IsNull(f.Alias);
@@ -22,7 +22,7 @@ namespace FluentQuery.Test.Api
         [Test]
         public void Criar_Field_Com_Alias()
         {
-            var f = new Field(new Table<Select>("users"), "nome").As("nome_do_usuario");
+            var f = new Field(new Table("users"), "nome").As("nome_do_usuario");
             Assert.AreEqual("users.nome AS nome_do_usuario", f.ToSql());
             Assert.AreEqual("users.nome", f.Project);
             Assert.NotNull(f.Alias);
@@ -32,7 +32,7 @@ namespace FluentQuery.Test.Api
         [Test]
         public void Sobrecarga_De_Operadores_Maior_Menor()
         {
-            var t = new Table<Select>("users");
+            var t = new Table("users");
             var f1 = t["data"];
             var f2 = t["nome"];
             var f3 = t["idade"];

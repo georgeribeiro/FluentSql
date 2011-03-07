@@ -5,6 +5,7 @@ using System.Text;
 using System.Collections;
 using FluentQuery.Expressions;
 using FluentQuery.Command;
+using FluentQuery.Clause;
 
 namespace FluentQuery
 {
@@ -17,10 +18,10 @@ namespace FluentQuery
         Hashtable Params { get; }
         void Clear();
         ITable Project(params Field[] fields);
-        ITable Join(ITable table, IExpression expression);
-        ITable LeftJoin(ITable table, IExpression expression);
-        ITable RightJoin(ITable table, IExpression expression);
-        ITable InnerJoin(ITable table, IExpression expression);
+        IJoin Join(ITable table);
+        IJoin LeftJoin(ITable table);
+        IJoin RightJoin(ITable table);
+        IJoin InnerJoin(ITable table);
         ITable Where(IExpression expression);
         ITable GroupBy(Field field);
         ITable Insert(object values);

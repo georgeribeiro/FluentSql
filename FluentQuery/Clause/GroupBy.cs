@@ -5,7 +5,7 @@ using System.Text;
 
 namespace FluentQuery.Clause
 {
-    class GroupBy : IClause
+    public class GroupBy : IClause
     {
         private Field _field;
         public GroupBy(Field field)
