@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using FluentSql.Command;
+using System.Collections;
 
 namespace FluentSql.Test
 {
@@ -48,6 +49,19 @@ namespace FluentSql.Test
                 salario = 500
             });
             string sql_expected = "UPDATE users SET ativo=@users_ativo_1, salario=@users_salario_1 WHERE users.idade > @users_idade_1";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Update_Com_Where_E_Hashtable()
+        {
+            var users = new Table("users");
+            Hashtable hs = new Hashtable();
+            hs.Add("superuser", true);
+            hs.Add("ativo", true);
+            users.Where(users["salario"] > 2000)
+                .Update(hs);
+            string sql_expected = "UPDATE users SET ativo=@users_ativo_1, superuser=@users_superuser_1 WHERE users.salario > @users_salario_1";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
     }
