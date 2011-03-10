@@ -5,6 +5,8 @@ using System.Text;
 using NUnit.Framework;
 using FluentSql.Command;
 using FluentSql.Test.Entities;
+using System.Collections;
+using FluentSql.Aggregates;
 
 namespace FluentSql.Test
 {
@@ -188,7 +190,7 @@ namespace FluentSql.Test
         public void Usar_Mais_De_Um_Join_Na_Query()
         {
             var clientes = new Table("clientes", "c");
-            ITable vendas = new Table("vendas", "v");
+            var vendas = new Table("vendas", "v");
             var produtos = new Table("produtos", "p");
             vendas.Project(vendas["data"], produtos["descricao"], clientes["nome"])
                 .LeftJoin(clientes).On(clientes["id"] == vendas["cliente_id"])
@@ -299,6 +301,124 @@ namespace FluentSql.Test
                 .Where(users["permissoes"].In("can_remove_user", "can_add_user"));
             string sql_expected = "SELECT users.* FROM users WHERE users.permissoes IN ('can_remove_user', 'can_add_user')";
             Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Usar_Campo_Com_Underline()
+        {
+            var users = new Table("tbUsers");
+            users.Project(users["USR_SEQUENCIAL"].As("Sequencial"), users["USR_NOME"].As("Nome"))
+                .Where(users["USR_NOME"].Like("g%") & users["USR_NOME"].Like("%e"));
+            string sql_expected = "SELECT tbUsers.USR_SEQUENCIAL AS Sequencial, tbUsers.USR_NOME AS Nome FROM tbUsers " +
+                "WHERE (Nome LIKE @tbUsers_USR_NOME_1) AND (Nome LIKE @tbUsers_USR_NOME_2)";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Usar_Function_Count()
+        {
+            var users = new Table("users");
+            users.Where(users["ativo"] == true).Count();
+            string sql_expected = "SELECT COUNT(*) FROM users WHERE users.ativo = @users_ativo_1";
+            string sql = users.ToSql();
+            Assert.AreEqual(sql_expected, sql);
+        }
+
+        [Test]
+        public void Usar_Function_Count_Com_Alias()
+        {
+            var users = new Table("users");
+            users.Project(Func.Count(users["ativo"]).As("count_usuarios_ativos"));
+            string sql_expected = "SELECT COUNT(users.ativo) AS count_usuarios_ativos FROM users";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Usar_Function_Sum_Com_Alias()
+        {
+            var vendas = new Table("vendas", "v");
+            var items_venda = new Table("items_venda", "i");
+            vendas.Project(Func.Sum(items_venda["valor"]).As("sum_items_venda_valor"))
+                .Join(items_venda).On(vendas["id"] == items_venda["venda_id"])
+                .Where(vendas["data"] > new DateTime(2011, 1, 1) & items_venda["valor"] > 12 | items_venda["valor"] < 1000);
+            string sql_expected = "SELECT SUM(i.valor) AS sum_items_venda_valor FROM vendas AS v JOIN items_venda AS i ON v.id = i.venda_id WHERE ((v.data > @vendas_data_1) "
+                +"AND (i.valor > @items_venda_valor_1)) OR (i.valor < @items_venda_valor_2)";
+            Assert.AreEqual(sql_expected, vendas.ToSql());
+        }
+
+        [Test]
+        public void Usar_Function_Max()
+        {
+            var produtos = new Table("produtos");
+            produtos.Project(Func.Max(produtos["preco"]).As("preco_produto"))
+                .Project(produtos["descricao"])
+                .Where(produtos["descricao"] != null);
+            string sql_expected = "SELECT MAX(produtos.preco) AS preco_produto, produtos.descricao FROM produtos "
+                +"WHERE produtos.descricao IS NOT NULL";
+            Assert.AreEqual(sql_expected, produtos.ToSql());
+        }
+
+        [Test]
+        public void Usar_Function_Sum_Com_Having()
+        {
+            var sales = new Table("sales");
+            sales.Project(sales["DeptID"], Func.Sum(sales["SaleAmount"]))
+                .Where(sales["SaleDate"] == new DateTime(2000, 1, 1))
+                .GroupBy(sales["DeptID"])
+                .Having(Func.Sum(sales["SaleAmount"]) > 1000 | Func.Sum(sales["SaleAmount"]) < 2000);
+            string sql_expected = "SELECT sales.DeptID, SUM(sales.SaleAmount) FROM sales WHERE sales.SaleDate = @sales_SaleDate_1 "
+                +"GROUP BY sales.DeptID HAVING (SUM(sales.SaleAmount) > @sales_sum_SaleAmount_1) OR (SUM(sales.SaleAmount) < @sales_sum_SaleAmount_2)";
+            Assert.AreEqual(sql_expected, sales.ToSql());
+            WriteParams(sales);
+        }
+
+        [Test]
+        public void Usar_Function_Count_Com_Having_E_Join()
+        {
+            var employee = new Table("employee");
+            var department = new Table("department");
+            employee.Project(employee["DepartmentName"], Func.Count(employee.All))
+                .Join(department).On(employee["DepartmentID"] == department["DepartmentID"])
+                .GroupBy(department["DepartmentName"])
+                .Having(Func.Count(employee.All) > 1);
+            string sql_expected = "SELECT employee.DepartmentName, COUNT(employee.*) FROM employee JOIN department ON " +
+                "employee.DepartmentID = department.DepartmentID GROUP BY department.DepartmentName HAVING COUNT(employee.*) > @employee_count_*_1";
+            Assert.AreEqual(sql_expected, employee.ToSql());
+        }
+
+        [Test]
+        public void Usar_Top_Na_Consulta()
+        {
+            ITable users = new Table("users");
+            users.Project(users["username"], users["password"])
+                .Where(users["ativo"] == true).Top(20);
+            string sql_expected = "SELECT TOP 20 users.username, users.password FROM users WHERE users.ativo = @users_ativo_1";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Usar_Subselect_Na_Consulta()
+        {
+            ITable users = new Table("users");
+            ITable groups = new Table("groups");
+            groups.Project(groups.All)
+                .Where(groups["name"]
+                .In(users.Project(users["name"])
+                .Where(users["data_criacao"] < DateTime.Today)));
+            string sql_expected = "SELECT groups.* FROM groups "+
+                "WHERE groups.name IN (SELECT users.name FROM users WHERE users.data_criacao < @users_data_criacao_1)";
+            Assert.AreEqual(sql_expected, groups.ToSql());
+        }
+
+        public void WriteParams(ITable t)
+        {
+            Console.WriteLine("Params FROM {0}", t.Name);
+            Console.WriteLine("-----------------------");
+            foreach (DictionaryEntry de in t.Params)
+            {
+                Console.WriteLine("{0} = {1}", de.Key, de.Value);
+            }
+            Console.WriteLine("========================");
         }
     }
 }

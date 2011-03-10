@@ -4,77 +4,80 @@ using System.Linq;
 using System.Text;
 using FluentSql.Expressions;
 
-namespace FluentSql
+namespace FluentSql.Aggregates
 {
-    public class Field : IProjection, IStatement
+    public class Aggregate : IAggregate, IStatement
     {
-        public Field(ITable table, string name)
+        protected Field Field { get; set; }
+        protected virtual string Agg
         {
-            Table = table;
-            Name = name;
-            Alias = null;
+            get
+            {
+                return Field.Project;
+            }
         }
 
-        public override int GetHashCode()
+        public Aggregate(Field aggregate)
         {
-            return this.Project.GetHashCode();
+            Field = aggregate;
         }
 
-        public override bool Equals(object obj)
-        {
-            return obj.GetHashCode() == this.GetHashCode();
-        }
+        public Aggregate() { }
 
-        public Field As(string alias)
+        public IAggregate As(string alias)
         {
             Alias = alias;
             return this;
         }
 
+        protected string BuildAgg()
+        {
+            return string.Format("{0}({1})", this.GetType().Name.ToUpper(), Agg);
+        }
+
+        public string ToSql()
+        {
+            if (!string.IsNullOrEmpty(Alias))
+            {
+                return String.Format("{0} AS {1}", BuildAgg(), Alias);
+            }
+            else
+            {
+                return String.Format("{0}", BuildAgg());
+            }
+        }
+
+        #region IStatement Members
+
+        public string Project
+        {
+            get 
+            {
+                return BuildAgg();
+            }
+        }
+
         public string Alias
         {
-            get; 
+            get;
             private set;
         }
 
         public string Name
         {
-            get;
-            private set;
+            get 
+            {
+                return String.Format("{0}_{1}", this.GetType().Name.ToLower(), Field.Name);
+            }
         }
 
         public ITable Table
         {
-            get;
-            private set;
-        }
-
-        public string Project
-        {
-            get
+            get 
             {
-                return String.Format("{0}.{1}", string.IsNullOrEmpty(Table.Alias) ? Table.Name : Table.Alias, Name);
+                return Field.Table;
             }
         }
-
-        public string ToSql()
-        {
-            if (!string.IsNullOrEmpty(this.Alias))
-            {
-                return string.Format("{0} AS {1}", this.Project, this.Alias);
-            }
-            else
-            {
-                return string.Format("{0}", this.Project);
-            }
-        }
-
-        public override string ToString()
-        {
-            return this.Name;
-        }
-
-        #region expressions
 
         public Expression Equal(IStatement other)
         {
@@ -101,9 +104,9 @@ namespace FluentSql
             return new LessThan(this, other);
         }
 
-        public Expression LessThan(object other)
+        public Expression LessThan(object obj)
         {
-            return new LessThan(this, other);
+            return new LessThan(this, obj);
         }
 
         public Expression LessThanOrEqualTo(IStatement other)
@@ -111,9 +114,9 @@ namespace FluentSql
             return new LessThanOrEqualTo(this, other);
         }
 
-        public Expression LessThanOrEqualTo(object other)
+        public Expression LessThanOrEqualTo(object obj)
         {
-            return new LessThanOrEqualTo(this, other);
+            return new LessThanOrEqualTo(this, obj);
         }
 
         public Expression GreaterThan(IStatement other)
@@ -121,9 +124,9 @@ namespace FluentSql
             return new GreaterThan(this, other);
         }
 
-        public Expression GreaterThan(object other)
+        public Expression GreaterThan(object obj)
         {
-            return new GreaterThan(this, other);
+            return new GreaterThan(this, obj);
         }
 
         public Expression GreaterThanOrEqualTo(IStatement other)
@@ -131,14 +134,14 @@ namespace FluentSql
             return new GreaterThanOrEqualTo(this, other);
         }
 
-        public Expression GreaterThanOrEqualTo(object other)
+        public Expression GreaterThanOrEqualTo(object obj)
         {
-            return new GreaterThanOrEqualTo(this, other);
+            return new GreaterThanOrEqualTo(this, obj);
         }
 
         public Expression Like(string expression_like)
         {
-            return new Like(this, expression_like);
+            return new Like(this, expression_like); 
         }
 
         public Expression In(params string[] sequence)
@@ -151,14 +154,9 @@ namespace FluentSql
             return new In(this, sequence);
         }
 
-        public Expression In(ITable table)
-        {
-            return new In(this, table);
-        }
-
         public Not Not
         {
-            get
+            get 
             {
                 return new Not(this);
             }
@@ -167,77 +165,85 @@ namespace FluentSql
         #endregion
 
         #region override operators
-
         public static Expression operator ==
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.Equal(two);
         }
 
         public static Expression operator ==
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.Equal(two);
         }
 
         public static Expression operator !=
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.NotEqual(two);
         }
 
         public static Expression operator !=
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.NotEqual(two);
         }
 
         public static Expression operator <
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.LessThan(two);
         }
 
         public static Expression operator <
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.LessThan(two);
         }
 
         public static Expression operator <=
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.LessThanOrEqualTo(two);
         }
 
         public static Expression operator <=
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.LessThanOrEqualTo(two);
         }
 
         public static Expression operator >
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.GreaterThan(two);
         }
 
         public static Expression operator >
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.GreaterThan(two);
         }
 
         public static Expression operator >=
-            (Field one, Field two)
+            (Aggregate one, IStatement two)
         {
             return one.GreaterThanOrEqualTo(two);
         }
 
         public static Expression operator >=
-            (Field one, object two)
+            (Aggregate one, object two)
         {
             return one.GreaterThanOrEqualTo(two);
+        }
+        #endregion
+
+        #region IStatement Members
+
+
+        public Expression In(ITable table)
+        {
+            return new In(this, table);
         }
 
         #endregion

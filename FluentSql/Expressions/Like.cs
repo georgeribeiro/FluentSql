@@ -5,9 +5,9 @@ using System.Text;
 
 namespace FluentSql.Expressions
 {
-    class Like : OperatorBase
+    class Like : Operator
     {
-        public Like(Field one, string two) : base(one, two) { }
+        public Like(IStatement one, string two) : base(one, two) { }
         
         public override string ToSql()
         {

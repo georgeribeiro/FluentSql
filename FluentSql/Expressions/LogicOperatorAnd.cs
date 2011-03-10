@@ -7,10 +7,10 @@ namespace FluentSql.Expressions
 {
     class LogicOperatorAnd : Expression
     {
-        private Expression _one;
-        private Expression _two;
+        private IExpression _one;
+        private IExpression _two;
 
-        public LogicOperatorAnd(Expression one, Expression two)
+        public LogicOperatorAnd(IExpression one, IExpression two)
         {
             _one = one;
             _two = two;

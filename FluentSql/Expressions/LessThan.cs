@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FluentSql.Expressions
 {
-    public class LessThan : OperatorBase
+    public class LessThan : Operator
     {
-        public LessThan(Field one, Field two) : base(one, two) { }
+        public LessThan(IStatement one, IStatement two) : base(one, two) { }
 
-        public LessThan(Field one, object two) : base(one, two) { }
+        public LessThan(IStatement one, object two) : base(one, two) { }
 
         public override string ToSql()
         {

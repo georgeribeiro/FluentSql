@@ -8,11 +8,11 @@ namespace FluentSql.Expressions
     public class Not : Expression
     {
         private IExpression _expression;
-        private Field _field;
+        private IStatement _statement;
 
-        public Not(Field field)
+        public Not(IStatement statement)
         {
-            _field = field;
+            _statement = statement;
             _expression = null;
         }
 
@@ -21,81 +21,87 @@ namespace FluentSql.Expressions
             _expression = expression;
         }
 
-        public IExpression Equal(Field other)
+        public IExpression Equal(IStatement other)
         {
-            this._expression = _field.Equal(other);
+            this._expression = _statement.Equal(other);
             return this;
         }
 
         public IExpression Equal(object other)
         {
-            this._expression = _field.Equal(other);
+            this._expression = _statement.Equal(other);
             return this;
         }
 
-        public IExpression LessThan(Field other)
+        public IExpression LessThan(IStatement other)
         {
-            this._expression = _field.LessThan(other);
+            this._expression = _statement.LessThan(other);
             return this;
         }
 
         public IExpression LessThan(object other)
         {
-            this._expression = _field.LessThan(other);
+            this._expression = _statement.LessThan(other);
             return this;
         }
 
-        public IExpression LessThanOrEqualTo(Field other)
+        public IExpression LessThanOrEqualTo(IStatement other)
         {
-            this._expression = _field.LessThanOrEqualTo(other);
+            this._expression = _statement.LessThanOrEqualTo(other);
             return this;
         }
 
         public IExpression LessThanOrEqualTo(object other)
         {
-            this._expression = _field.LessThanOrEqualTo(other);
+            this._expression = _statement.LessThanOrEqualTo(other);
             return this;
         }
 
-        public IExpression GreaterThan(Field other)
+        public IExpression GreaterThan(IStatement other)
         {
-            this._expression = _field.GreaterThan(other);
+            this._expression = _statement.GreaterThan(other);
             return this;
         }
 
         public IExpression GreaterThan(object other)
         {
-            this._expression = _field.GreaterThan(other);
+            this._expression = _statement.GreaterThan(other);
             return this;
         }
 
-        public IExpression GreaterThanOrEqualTo(Field other)
+        public IExpression GreaterThanOrEqualTo(IStatement other)
         {
-            this._expression = _field.GreaterThanOrEqualTo(other);
+            this._expression = _statement.GreaterThanOrEqualTo(other);
             return this;
         }
 
         public IExpression GreaterThanOrEqualTo(object other)
         {
-            this._expression = _field.GreaterThanOrEqualTo(other);
+            this._expression = _statement.GreaterThanOrEqualTo(other);
             return this;
         }
 
         public IExpression Like(string like_expression)
         {
-            this._expression = _field.Like(like_expression);
+            this._expression = _statement.Like(like_expression);
             return this;
         }
 
         public IExpression In(params string[] sequence)
         {
-            this._expression = _field.In(sequence);
+            this._expression = _statement.In(sequence);
             return this;
         }
 
         public IExpression In(params object[] sequence)
         {
-            this._expression = _field.In(sequence);
+            this._expression = _statement.In(sequence);
+            return this;
+        }
+
+        public IExpression In(ITable table)
+        {
+            this._expression = _statement.In(table);
             return this;
         }
 

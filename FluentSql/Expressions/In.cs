@@ -7,24 +7,38 @@ namespace FluentSql.Expressions
 {
     public class In : Expression
     {
-        private Field _one;
+        private IStatement _one;
         private string[] _sequence;
-        
-        public In(Field field, params string[] sequence)
+        private ITable _table;
+
+        public In(IStatement field, params string[] sequence)
         {
             _one = field;
             _sequence = (from s in sequence select String.Format("'{0}'", s)).ToArray();
         }
 
-        public In(Field field, params object[] sequence)
+        public In(IStatement field, params object[] sequence)
         {
             _one = field;
             _sequence = (from s in sequence select s.ToString()).ToArray();
         }
 
+        public In(IStatement field, ITable table)
+        {
+            _one = field;
+            _table = table;
+        }
+
         public override string ToSql()
         {
-            return String.Format("{0} IN ({1})", FieldToString(_one), BuildSequence(_sequence));
+            if (_table == null)
+            {
+                return String.Format("{0} IN ({1})", StatementToString(_one), BuildSequence(_sequence));
+            }
+            else
+            {
+                return string.Format("{0} IN ({1})", StatementToString(_one), _table.ToSql());
+            }
         }
 
         private string BuildSequence(string[] sequence)
@@ -32,9 +46,9 @@ namespace FluentSql.Expressions
                 return string.Join(", ", sequence);
         }
 
-        private string FieldToString(Field f)
+        private string StatementToString(IStatement s)
         {
-            return string.IsNullOrEmpty(f.Alias) ? f.Project : f.Alias;
+            return string.IsNullOrEmpty(s.Alias) ? s.Project : s.Alias;
         }
     }
 }

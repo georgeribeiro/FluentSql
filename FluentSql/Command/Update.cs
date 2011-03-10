@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using FluentSql.Expressions;
 using FluentSql.Clause;
+using FluentSql.Aggregates;
 
 namespace FluentSql.Command
 {
@@ -18,7 +19,12 @@ namespace FluentSql.Command
 
         #region ICommand Members
 
-        public ICommand Project(params Field[] fields)
+        public ICommand Project(params IProjection[] projects)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
+        public ICommand Project(IAggregate aggregate)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -54,7 +60,15 @@ namespace FluentSql.Command
             IDictionary<string, object> keyvalue = Utils.Params.ObjectToDicionary(values);
             foreach (KeyValuePair<string, object> kvp in keyvalue)
             {
-                FieldValues.Add(kvp.Key, Table.AddParam(kvp.Key, kvp.Value));
+                if (kvp.Value != null)
+                {
+                    FieldValues.Add(kvp.Key, String.Format("@{0}", Table.AddParam(kvp.Key, kvp.Value)));
+                }
+                else
+                {
+                    FieldValues.Add(kvp.Key, "NULL");
+                }
+                
             }
             return this;
         }
@@ -64,43 +78,22 @@ namespace FluentSql.Command
             throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public IList<Field> Projects
+        public ICommand Having(IExpression expression)
         {
-            get
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
-            set
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public IList<FluentSql.Clause.IJoin> Joins
+        public ICommand Count()
         {
-            get
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
-            set
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
+        public ICommand Top(int number)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
         }
 
         public IList<FluentSql.Expressions.IExpression> Wheres { get; set; }
-
-        public IList<FluentSql.Clause.GroupBy> GroupBys
-        {
-            get
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
-            set
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
-        }
 
         public IDictionary<string, object> FieldValues { get; set; }
 
@@ -111,7 +104,7 @@ namespace FluentSql.Command
         #region Build Members
         private string BuildValues()
         {
-            return String.Join(", ", (from fv in FieldValues.Keys select String.Format("{0}=@{1}", fv, FieldValues[fv])).ToArray());    
+            return String.Join(", ", (from fv in FieldValues.Keys select String.Format("{0}={1}", fv, FieldValues[fv])).ToArray());    
         }
 
         private string BuildWhere()

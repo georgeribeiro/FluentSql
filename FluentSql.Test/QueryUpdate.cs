@@ -57,12 +57,14 @@ namespace FluentSql.Test
         {
             var users = new Table("users");
             Hashtable hs = new Hashtable();
-            hs.Add("superuser", true);
+            hs.Add("superuser", false);
             hs.Add("ativo", true);
-            users.Where(users["salario"] > 2000)
+            users.Where(users["salario"] <= 2000)
                 .Update(hs);
-            string sql_expected = "UPDATE users SET ativo=@users_ativo_1, superuser=@users_superuser_1 WHERE users.salario > @users_salario_1";
+            string sql_expected = "UPDATE users SET ativo=@users_ativo_1, superuser=@users_superuser_1 WHERE users.salario <= @users_salario_1";
             Assert.AreEqual(sql_expected, users.ToSql());
+            Assert.AreEqual(true, users.Params["users_ativo_1"]);
+            Assert.AreEqual(false, users.Params["users_superuser_1"]);
         }
     }
 }

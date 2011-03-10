@@ -45,6 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aggregates\Aggregate.cs" />
+    <Compile Include="Aggregates\Avg.cs" />
+    <Compile Include="Aggregates\Count.cs" />
+    <Compile Include="Aggregates\IAggregate.cs" />
+    <Compile Include="Aggregates\Max.cs" />
+    <Compile Include="Aggregates\Min.cs" />
+    <Compile Include="Aggregates\Sum.cs" />
     <Compile Include="Clause\GroupBy.cs" />
     <Compile Include="Clause\IClause.cs" />
     <Compile Include="Clause\IJoin.cs" />
@@ -60,6 +67,7 @@
     <Compile Include="Expressions\GreaterThanOrEqualTo.cs" />
     <Compile Include="Expressions\IExpression.cs" />
     <Compile Include="Expressions\In.cs" />
+    <Compile Include="Expressions\IStatement.cs" />
     <Compile Include="Expressions\LessThan.cs" />
     <Compile Include="Expressions\LessThanOrEqualTo.cs" />
     <Compile Include="Expressions\Like.cs" />
@@ -69,10 +77,12 @@
     <Compile Include="Expressions\Expression.cs" />
     <Compile Include="Expressions\Not.cs" />
     <Compile Include="Expressions\LogicOperatorOr.cs" />
-    <Compile Include="Expressions\OperatorBase.cs" />
+    <Compile Include="Expressions\Operator.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="Command\ICommand.cs" />
     <Compile Include="Command\Insert.cs" />
+    <Compile Include="Func.cs" />
+    <Compile Include="IProjection.cs" />
     <Compile Include="ITable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Table.cs" />

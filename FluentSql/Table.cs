@@ -14,7 +14,6 @@ namespace FluentSql
         private ICommand _command = null;
         private readonly Hashtable _params = new Hashtable();
         private IList<Field> _fields = new List<Field>();
-
         public string Name { get; private set; }
         public string Alias { get; private set; }
 
@@ -64,7 +63,11 @@ namespace FluentSql
             int count = 0;
             foreach (string k in _params.Keys)
             {
-                if (k.Split('_')[1] == key)
+                var list = k.Replace(this.Name, "").Split('_').ToList();
+                list.RemoveAt(0);
+                list.RemoveAt(list.Count - 1);
+                string kk = string.Join("_", list.ToArray());
+                if (kk == key)
                     count++;
             }
             param = String.Format(format_param, Name, key, (count > 0 ? (++count) : 1).ToString());
@@ -98,9 +101,9 @@ namespace FluentSql
         #endregion
 
         #region ITable members
-        public ITable Project(params Field[] fields)
+        public ITable Project(params IProjection[] projects)
         {
-            _command.Project(fields);
+            _command.Project(projects);
             return this;
         }
 
@@ -140,6 +143,24 @@ namespace FluentSql
             return this;
         }
 
+        public ITable Having(IExpression expression)
+        {
+            _command.Having(expression);
+            return this;
+        }
+
+        public ITable Count()
+        {
+            _command.Count();
+            return this;
+        }
+
+        public ITable Top(int number)
+        {
+            _command.Top(number);
+            return this;
+        }
+
         public ITable Insert(object values)
         {
             _command = new Insert(this);
@@ -149,14 +170,14 @@ namespace FluentSql
 
         public ITable Update(object values)
         {
-            _command = new Update(this, _command.Wheres);
+            _command = new Update(this, ((Select)_command).Wheres);
             _command.Values(values);
             return this;
         }
 
         public ITable Delete()
         {
-            _command = new Delete(this, _command.Wheres);
+            _command = new Delete(this, ((Select)_command).Wheres);
             return this;
         }
         #endregion

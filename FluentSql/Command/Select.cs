@@ -5,6 +5,7 @@ using System.Text;
 using FluentSql.Clause;
 using FluentSql.Expressions;
 using System.Collections;
+using FluentSql.Aggregates;
 
 namespace FluentSql.Command
 {
@@ -13,40 +14,34 @@ namespace FluentSql.Command
         public Select(ITable table)
         {
             this.Table = table;
-            this.Projects = new List<Field>();
+            this.Projects = new List<IProjection>();
             this.Joins = new List<IJoin>();
             this.Wheres = new List<IExpression>();
             this.GroupBys = new List<GroupBy>();
+            this.Havings = new List<IExpression>();
+            this._Count = false;
+            this._Top = 0;
         }
 
         #region ICommand Members
-        public IList<Field> Projects { get; set; }
+        public IList<IProjection> Projects { get; set; }
         public IList<IJoin> Joins { get; set; }
         public IList<IExpression> Wheres { get; set; }
         public IList<GroupBy> GroupBys { get; set; }
-        public IDictionary<string, object> FieldValues
-        {
-            get
-            {
-                throw new NotSupportedException("Clause don't supported by command.");   
-            }
-            set
-            {
-                throw new NotSupportedException("Clause don't supported by command.");
-            }
-        }
+        public IList<IExpression> Havings { get; set; }
         public ITable Table { get; set; }
-        
+        public bool _Count { get; set; }
+        public int _Top { get; set; }
         public string ToSql()
         {
-            return String.Format("SELECT {0} {1}{2}{3}{4}", BuildProject(), BuildFrom(), BuildJoin(), BuildWhere(), BuildGroupBy());
+            return String.Format("SELECT {0}{1} {2}{3}{4}{5}{6}", BuildTop(), BuildProject(), BuildFrom(), BuildJoin(), BuildWhere(), BuildGroupBy(), BuildHaving());
         }
 
-        public ICommand Project(params Field[] fields)
+        public ICommand Project(params IProjection[] projects)
         {
-            foreach (Field item in fields)
+            foreach (var p in projects)
             {
-                Projects.Add(item);
+                Projects.Add(p);
             }
             return this;
         }
@@ -91,6 +86,24 @@ namespace FluentSql.Command
             return this;
         }
 
+        public ICommand Having(IExpression expression)
+        {
+            Havings.Add(expression);
+            return this;
+        }
+
+        public ICommand Count()
+        {
+            this._Count = true;
+            return this;
+        }
+
+        public ICommand Top(int number)
+        {
+            this._Top = number;
+            return this;
+        }
+
         public ICommand Values(object values)
         {
             throw new NotSupportedException("Clause don't supported by command.");
@@ -100,6 +113,10 @@ namespace FluentSql.Command
         #region Build Members
         private string BuildProject()
         {
+            if (this._Count)
+            {
+                return "COUNT(*)";
+            }
             if (Projects.Count == 0)
             {
                 return "*";
@@ -139,6 +156,24 @@ namespace FluentSql.Command
             if (GroupBys.Count > 0)
             {
                 return " GROUP BY " + String.Join(", ", (from g in GroupBys select g.ToSql()).ToArray());
+            }
+            return string.Empty;
+        }
+
+        public string BuildHaving()
+        {
+            if (Havings.Count > 0)
+            {
+                return " HAVING " + string.Join(" AND ", (from h in Havings select h.ToSql()).ToArray());
+            }
+            return string.Empty;
+        }
+
+        public string BuildTop()
+        {
+            if (_Top > 0)
+            {
+                return string.Format("TOP {0} ", _Top);
             }
             return string.Empty;
         }

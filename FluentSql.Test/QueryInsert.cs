@@ -32,5 +32,17 @@ namespace FluentSql.Test
             string sql_expected = "INSERT INTO users(data_nascimento, nome, sexo) VALUES(@users_data_nascimento_1, @users_nome_1, @users_sexo_1)";
             Assert.AreEqual(sql_expected, t_users.ToSql());
         }
+
+        [Test]
+        public void Insert_Com_Valor_Nulo()
+        {
+            var users = new Table("users");
+            Hashtable hs = new Hashtable();
+            hs.Add("nome", "george");
+            hs.Add("idade", null);
+            users.Insert(hs);
+            string sql_expected = "INSERT INTO users(nome, idade) VALUES(@users_nome_1, NULL)";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
     }
 }

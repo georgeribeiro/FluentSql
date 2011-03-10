@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FluentSql.Expressions
 {
-    public class NotEqual : OperatorBase
+    public class NotEqual : Operator
     {
-        public NotEqual(Field one, Field two) : base(one, two) { }
+        public NotEqual(IStatement one, IStatement two) : base(one, two) { }
 
-        public NotEqual(Field one, object two) : base(one, two) { }
+        public NotEqual(IStatement one, object two) : base(one, two) { }
 
         public override string ToSql()
         {

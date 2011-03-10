@@ -5,11 +5,11 @@ using System.Text;
 
 namespace FluentSql.Expressions
 {
-    class GreaterThanOrEqualTo : OperatorBase
+    class GreaterThanOrEqualTo : Operator
     {
-        public GreaterThanOrEqualTo(Field one, Field two) : base(one, two) { }
+        public GreaterThanOrEqualTo(IStatement one, IStatement two) : base(one, two) { }
 
-        public GreaterThanOrEqualTo(Field one, object two) : base(one, two) { }
+        public GreaterThanOrEqualTo(IStatement one, object two) : base(one, two) { }
 
         public override string ToSql()
         {
