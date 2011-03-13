@@ -6,11 +6,11 @@ using System.Reflection;
 using System.ComponentModel;
 using System.Collections;
 
-namespace FluentSql.Utils
+namespace FluentSql
 {
-    internal class Params
+    public static class Utils
     {
-        public static IDictionary<string, object> ObjectToDicionary(object o)
+        internal static IDictionary<string, object> ObjectToDicionary(object o)
         {
             var result = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
             if (o == null)
@@ -34,5 +34,15 @@ namespace FluentSql.Utils
             
             return result;
         }
+
+        public static void AddFrom(this Hashtable self, Hashtable other)
+        {
+            foreach (DictionaryEntry de in other)
+            {
+                self.Add(de.Key, de.Value);
+            }
+        }
+
+        public const object NULL = null;
     }
 }

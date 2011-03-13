@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FluentSql.Expressions;
+using FluentSql.Clause;
 
 namespace FluentSql
 {
-    public class Field : IProjection, IStatement
+    public class Field : IProject, IStatement, IOrder, IGroup
     {
         public Field(ITable table, string name)
         {
@@ -57,7 +58,7 @@ namespace FluentSql
             }
         }
 
-        public string ToSql()
+        public string AsProject()
         {
             if (!string.IsNullOrEmpty(this.Alias))
             {
@@ -165,6 +166,8 @@ namespace FluentSql
         }
 
         #endregion
+        
+        
 
         #region override operators
 
@@ -238,6 +241,48 @@ namespace FluentSql
             (Field one, object two)
         {
             return one.GreaterThanOrEqualTo(two);
+        }
+
+        #endregion
+
+        #region IOrder Members
+
+        public string AsOrder()
+        {
+            return string.Format("{0}{1}", this.Project, this.Order == TypeOrder.Desc ? " DESC" : "");
+        }
+
+        public IOrder Asc
+        {
+            get 
+            {
+                this.Order = TypeOrder.Asc;
+                return this;
+            }
+        }
+
+        public IOrder Desc
+        {
+            get 
+            {
+                this.Order = TypeOrder.Desc;
+                return this;
+            }
+        }
+
+        public TypeOrder Order
+        {
+            get;
+            private set;
+        }
+
+        #endregion
+
+        #region IGroup Members
+
+        public string AsGroup()
+        {
+            return this.Project;
         }
 
         #endregion

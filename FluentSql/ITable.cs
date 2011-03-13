@@ -19,13 +19,14 @@ namespace FluentSql
         string AddParam(string key, object obj);
         Hashtable Params { get; }
         void Clear();
-        ITable Project(params IProjection[] projects);
+        ITable Project(params IProject[] projects);
         IJoin Join(ITable table);
         IJoin LeftJoin(ITable table);
         IJoin RightJoin(ITable table);
         IJoin InnerJoin(ITable table);
         ITable Where(IExpression expression);
-        ITable GroupBy(Field field);
+        ITable OrderBy(params IOrder[] order);
+        ITable GroupBy(params IGroup[] groups);
         ITable Having(IExpression expression);
         ITable Count();
         ITable Top(int number);

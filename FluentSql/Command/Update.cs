@@ -19,7 +19,7 @@ namespace FluentSql.Command
 
         #region ICommand Members
 
-        public ICommand Project(params IProjection[] projects)
+        public ICommand Project(params IProject[] projects)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -57,7 +57,7 @@ namespace FluentSql.Command
 
         public ICommand Values(object values)
         {
-            IDictionary<string, object> keyvalue = Utils.Params.ObjectToDicionary(values);
+            IDictionary<string, object> keyvalue = Utils.ObjectToDicionary(values);
             foreach (KeyValuePair<string, object> kvp in keyvalue)
             {
                 if (kvp.Value != null)
@@ -73,7 +73,7 @@ namespace FluentSql.Command
             return this;
         }
 
-        public ICommand GroupBy(Field field)
+        public ICommand GroupBy(params IGroup[] groups)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -121,5 +121,15 @@ namespace FluentSql.Command
         {
             return String.Format("UPDATE {0} SET {1}{2}", this.Table.Name, BuildValues(), BuildWhere());
         }
+
+        #region ICommand Members
+
+
+        public ICommand OrderBy(params IOrder[] order)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
+        #endregion
     }
 }

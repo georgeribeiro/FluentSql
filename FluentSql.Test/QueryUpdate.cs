@@ -53,6 +53,16 @@ namespace FluentSql.Test
         }
 
         [Test]
+        public void Update_Com_Where_E_Valor_Nulo()
+        {
+            var users = new Table("users");
+            users.Where(users["nome"] != null)
+                .Update(new { idade = Utils.NULL });
+            string sql_expected = "UPDATE users SET idade=NULL WHERE users.nome IS NOT NULL";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
         public void Update_Com_Where_E_Hashtable()
         {
             var users = new Table("users");

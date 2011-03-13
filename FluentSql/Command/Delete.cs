@@ -25,7 +25,7 @@ namespace FluentSql.Command
             return String.Format("DELETE FROM {0}{1}", Table.Name, BuildWhere());
         }
 
-        public ICommand Project(params IProjection[] projects)
+        public ICommand Project(params IProject[] projects)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -56,7 +56,7 @@ namespace FluentSql.Command
             return this;
         }
 
-        public ICommand GroupBy(Field field)
+        public ICommand GroupBy(params IGroup[] groups)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -92,6 +92,16 @@ namespace FluentSql.Command
             }
             return string.Empty;
         }
+        #endregion
+
+        #region ICommand Members
+
+
+        public ICommand OrderBy(params IOrder[] order)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         #endregion
     }
 }

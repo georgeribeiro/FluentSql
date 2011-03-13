@@ -35,7 +35,7 @@ namespace FluentSql.Aggregates
             return string.Format("{0}({1})", this.GetType().Name.ToUpper(), Agg);
         }
 
-        public string ToSql()
+        public string AsProject()
         {
             if (!string.IsNullOrEmpty(Alias))
             {

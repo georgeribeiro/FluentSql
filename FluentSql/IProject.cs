@@ -5,8 +5,8 @@ using System.Text;
 
 namespace FluentSql
 {
-    public interface IProjection
+    public interface IProject
     {
-        string ToSql();
+        string AsProject();
     }
 }

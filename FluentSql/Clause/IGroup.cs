@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FluentSql.Aggregates
+namespace FluentSql.Clause
 {
-    public interface IAggregate : IProject
+    public interface IGroup
     {
-        IAggregate As(string alias);
+        string AsGroup();
     }
 }

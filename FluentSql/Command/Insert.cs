@@ -34,7 +34,7 @@ namespace FluentSql.Command
         public ITable Table { get; set; }
         public ICommand Values(object values)
         {
-            IDictionary<string, object> keyvalue = Utils.Params.ObjectToDicionary(values);
+            IDictionary<string, object> keyvalue = Utils.ObjectToDicionary(values);
             foreach (KeyValuePair<string, object> kvp in keyvalue)
             {
                 if (kvp.Value != null)
@@ -54,12 +54,7 @@ namespace FluentSql.Command
             return string.Format("INSERT INTO {0}({1}) VALUES({2})", Table.Name, BuildFields(), BuildValues());
         }
 
-        public ICommand Project(params IProjection[] projects)
-        {
-            throw new NotSupportedException("Clause don't supported by command.");
-        }
-
-        public ICommand Project(IAggregate aggregate)
+        public ICommand Project(params IProject[] projects)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -89,7 +84,7 @@ namespace FluentSql.Command
             throw new NotSupportedException("Clause don't supported by command.");
         }
 
-        public ICommand GroupBy(Field field)
+        public ICommand GroupBy(params IGroup[] groups)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }
@@ -105,6 +100,15 @@ namespace FluentSql.Command
         }
 
         public ICommand Top(int number)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
+        #endregion
+
+        #region ICommand Members
+
+        public ICommand OrderBy(params IOrder[] order)
         {
             throw new NotSupportedException("Clause don't supported by command.");
         }

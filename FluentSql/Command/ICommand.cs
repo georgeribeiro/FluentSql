@@ -11,13 +11,14 @@ namespace FluentSql.Command
     public interface ICommand
     {
         string ToSql();
-        ICommand Project(params IProjection[] fields);
+        ICommand Project(params IProject[] fields);
         IJoin Join(ITable table);
         IJoin LeftJoin(ITable table);
         IJoin RightJoin(ITable table);
         IJoin InnerJoin(ITable table);
         ICommand Where(IExpression expression);
-        ICommand GroupBy(Field field);
+        ICommand OrderBy(params IOrder[] orders);
+        ICommand GroupBy(params IGroup[] groups);
         ICommand Having(IExpression expression);
         ICommand Count();
         ICommand Values(object values);

@@ -6,7 +6,7 @@ using FluentSql.Aggregates;
 
 namespace FluentSql
 {
-    public static class Func
+    public static class F
     {
         public static Aggregate Count(Field aggregate)
         {

@@ -14,30 +14,34 @@ namespace FluentSql.Command
         public Select(ITable table)
         {
             this.Table = table;
-            this.Projects = new List<IProjection>();
+            this.Projects = new List<IProject>();
             this.Joins = new List<IJoin>();
             this.Wheres = new List<IExpression>();
-            this.GroupBys = new List<GroupBy>();
+            this.Orders = new List<IOrder>();
+            this.GroupBys = new List<IGroup>();
             this.Havings = new List<IExpression>();
             this._Count = false;
             this._Top = 0;
         }
 
         #region ICommand Members
-        public IList<IProjection> Projects { get; set; }
+        public IList<IProject> Projects { get; set; }
         public IList<IJoin> Joins { get; set; }
         public IList<IExpression> Wheres { get; set; }
-        public IList<GroupBy> GroupBys { get; set; }
+        public IList<IOrder> Orders { get; set; }
+        public IList<IGroup> GroupBys { get; set; }
         public IList<IExpression> Havings { get; set; }
         public ITable Table { get; set; }
         public bool _Count { get; set; }
         public int _Top { get; set; }
+        
         public string ToSql()
         {
-            return String.Format("SELECT {0}{1} {2}{3}{4}{5}{6}", BuildTop(), BuildProject(), BuildFrom(), BuildJoin(), BuildWhere(), BuildGroupBy(), BuildHaving());
+            return String.Format("SELECT {0}{1} {2}{3}{4}{5}{6}{7}", BuildTop(), BuildProject(), 
+                BuildFrom(), BuildJoin(), BuildWhere(), BuildOrderBy(), BuildGroupBy(), BuildHaving());
         }
 
-        public ICommand Project(params IProjection[] projects)
+        public ICommand Project(params IProject[] projects)
         {
             foreach (var p in projects)
             {
@@ -80,9 +84,12 @@ namespace FluentSql.Command
             return this;
         }
 
-        public ICommand GroupBy(Field field)
+        public ICommand GroupBy(params IGroup[] groups)
         {
-            GroupBys.Add(new GroupBy(field));
+            foreach (IGroup g in groups)
+            {
+                GroupBys.Add(g);    
+            }
             return this;
         }
 
@@ -121,7 +128,7 @@ namespace FluentSql.Command
             {
                 return "*";
             }
-            return String.Join(", ", (from f in Projects select f.ToSql()).ToArray());
+            return String.Join(", ", (from f in Projects select f.AsProject()).ToArray());
         }
 
         private string BuildJoin()
@@ -151,11 +158,20 @@ namespace FluentSql.Command
             return string.Empty;
         }
 
+        public string BuildOrderBy()
+        {
+            if (Orders.Count > 0)
+            {
+                return " ORDER BY " + string.Join(" AND ", (from o in Orders select o.AsOrder()).ToArray());
+            }
+            return string.Empty;
+        }
+
         private string BuildGroupBy()
         {
             if (GroupBys.Count > 0)
             {
-                return " GROUP BY " + String.Join(", ", (from g in GroupBys select g.ToSql()).ToArray());
+                return " GROUP BY " + String.Join(", ", (from g in GroupBys select g.AsGroup()).ToArray());
             }
             return string.Empty;
         }
@@ -177,6 +193,19 @@ namespace FluentSql.Command
             }
             return string.Empty;
         }
+        #endregion
+
+        #region ICommand Members
+
+        public ICommand OrderBy(params IOrder[] orders)
+        {
+            foreach (IOrder order in orders)
+            {
+                Orders.Add(order);
+            }
+            return this;
+        }
+
         #endregion
     }
 }

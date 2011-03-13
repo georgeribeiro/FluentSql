@@ -101,7 +101,7 @@ namespace FluentSql
         #endregion
 
         #region ITable members
-        public ITable Project(params IProjection[] projects)
+        public ITable Project(params IProject[] projects)
         {
             _command.Project(projects);
             return this;
@@ -137,9 +137,15 @@ namespace FluentSql
             return this;
         }
 
-        public ITable GroupBy(Field field)
+        public ITable OrderBy(params IOrder[] order)
         {
-            _command.GroupBy(field);
+            _command.OrderBy(order);
+            return this;
+        }
+
+        public ITable GroupBy(params IGroup[] groups)
+        {
+            _command.GroupBy(groups);
             return this;
         }
 
