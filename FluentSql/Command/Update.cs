@@ -55,6 +55,11 @@ namespace FluentSql.Command
             return this;
         }
 
+        public ICommand OrderBy(params IOrder[] order)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         public ICommand Values(object values)
         {
             IDictionary<string, object> keyvalue = Utils.ObjectToDicionary(values);
@@ -93,6 +98,11 @@ namespace FluentSql.Command
             throw new NotSupportedException("Clause don't supported by command.");
         }
 
+        public ICommand Distinct()
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         public IList<FluentSql.Expressions.IExpression> Wheres { get; set; }
 
         public IDictionary<string, object> FieldValues { get; set; }
@@ -121,15 +131,5 @@ namespace FluentSql.Command
         {
             return String.Format("UPDATE {0} SET {1}{2}", this.Table.Name, BuildValues(), BuildWhere());
         }
-
-        #region ICommand Members
-
-
-        public ICommand OrderBy(params IOrder[] order)
-        {
-            throw new NotSupportedException("Clause don't supported by command.");
-        }
-
-        #endregion
     }
 }

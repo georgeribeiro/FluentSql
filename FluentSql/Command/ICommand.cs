@@ -23,5 +23,6 @@ namespace FluentSql.Command
         ICommand Count();
         ICommand Values(object values);
         ICommand Top(int number);
+        ICommand Distinct();
     }
 }

@@ -65,6 +65,8 @@
     <Compile Include="Command\Delete.cs" />
     <Compile Include="Command\Select.cs" />
     <Compile Include="Command\Update.cs" />
+    <Compile Include="Exceptions\FluentSqlException.cs" />
+    <Compile Include="Exceptions\InvalidClauseException.cs" />
     <Compile Include="Expressions\GreaterThan.cs" />
     <Compile Include="Expressions\GreaterThanOrEqualTo.cs" />
     <Compile Include="Expressions\IExpression.cs" />

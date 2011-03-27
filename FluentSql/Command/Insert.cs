@@ -104,6 +104,11 @@ namespace FluentSql.Command
             throw new NotSupportedException("Clause don't supported by command.");
         }
 
+        public ICommand Distinct()
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         #endregion
 
         #region ICommand Members

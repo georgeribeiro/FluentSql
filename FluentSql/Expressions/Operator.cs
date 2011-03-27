@@ -37,7 +37,7 @@ namespace FluentSql.Expressions
             {
                 if (two is ITable)
                 {
-                    Two = ((ITable)two).ToSql();
+                    Two = String.Format("({0})", ((ITable)two).ToSql());
                 }
                 else
                 {

@@ -7,6 +7,7 @@ using FluentSql.Command;
 using FluentSql.Test.Entities;
 using System.Collections;
 using FluentSql.Aggregates;
+using FluentSql.Exceptions;
 
 namespace FluentSql.Test
 {
@@ -105,7 +106,8 @@ namespace FluentSql.Test
             users.Project(users.All, groups.All)
                 .InnerJoin(groups).On(groups["id"] == users["group_id"])
                 .Where(users["id"] == 1 & users["nome"] != "george");
-            string sql_expected = "SELECT u.*, g.* FROM users AS u INNER JOIN groups AS g ON g.id = u.group_id WHERE (u.id = @users_id_1) AND (u.nome <> @users_nome_1)";
+            string sql_expected = "SELECT u.*, g.* FROM users AS u INNER JOIN groups AS g ON g.id = u.group_id "+
+                "WHERE (u.id = @users_id_1) AND (u.nome <> @users_nome_1)";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
         
@@ -315,6 +317,18 @@ namespace FluentSql.Test
         }
 
         [Test]
+        public void Consulta_Com_Subselect_No_Where()
+        {
+            var t_users = new Table("tbUsers");
+            var t_groups = new Table("tbGroups");
+            t_users.Project(t_users.All)
+                .Where(t_users["status"] == t_groups.Project(t_groups["status"]).Where(t_groups["id"] == 1));
+            string sql_expected = "SELECT tbUsers.* FROM tbUsers WHERE tbUsers.status = "
+                +"(SELECT tbGroups.status FROM tbGroups WHERE tbGroups.id = @tbGroups_id_1)";
+            Assert.AreEqual(sql_expected, t_users.ToSql());
+        }
+
+        [Test]
         public void Usar_Function_Count()
         {
             var users = new Table("users");
@@ -353,9 +367,10 @@ namespace FluentSql.Test
             var produtos = new Table("produtos");
             produtos.Project(F.Max(produtos["preco"]).As("preco_produto"))
                 .Project(produtos["descricao"])
-                .Where(produtos["descricao"] != null);
+                .Where(produtos["descricao"] != null)
+                .GroupBy(produtos["descricao"]);
             string sql_expected = "SELECT MAX(produtos.preco) AS preco_produto, produtos.descricao FROM produtos "
-                +"WHERE produtos.descricao IS NOT NULL";
+                +"WHERE produtos.descricao IS NOT NULL GROUP BY produtos.descricao";
             Assert.AreEqual(sql_expected, produtos.ToSql());
         }
 
@@ -399,6 +414,22 @@ namespace FluentSql.Test
         }
 
         [Test]
+        public void Usar_Top_Negativo_Deve_Retornar_Excecao_InvalidClauseException()
+        {
+            try
+            {
+                var users = new Table("users");
+                users.Project(users.All).OrderBy(users["nome"].Desc)
+                    .Top(-20);
+                Assert.Fail();
+            }
+            catch (InvalidClauseException)
+            {
+                Assert.True(true);
+            }
+        }
+
+        [Test]
         public void Usar_Subselect_Na_Consulta()
         {
             ITable users = new Table("users");
@@ -418,9 +449,46 @@ namespace FluentSql.Test
             var users = new Table("users");
             users.Project(users["name"], users["password"])
                 .Where(users["active"] == true)
-                .OrderBy(users["created_at"].Desc);
+                .OrderBy(users["created_at"].Desc, users["name"]);
             string sql_expected = "SELECT users.name, users.password FROM users WHERE users.active = @users_active_1 "
-                +"ORDER BY users.created_at DESC";
+                +"ORDER BY users.created_at DESC, users.name";
+            Assert.AreEqual(sql_expected, users.ToSql());
+        }
+
+        [Test]
+        public void Consulta_Zerando_Project_Com_Null()
+        {
+            var users = new Table("users");
+            users.Project(users["name"])
+                .Where(users["name"].Like("%n"));
+            string sql1 = "SELECT users.name FROM users WHERE users.name LIKE @users_name_1";
+            Assert.AreEqual(sql1, users.ToSql());
+            users.Project(null);
+            string sql2 = "SELECT * FROM users WHERE users.name LIKE @users_name_1";
+            Assert.AreEqual(sql2, users.ToSql());
+        }
+
+        [Test]
+        public void Consulta_Where_E_Zerando_Where_Com_Null()
+        {
+            var users = new Table("users");
+            users.Project(users["name"])
+                .Where(users["name"].Like("%n"));
+            string sql1 = "SELECT users.name FROM users WHERE users.name LIKE @users_name_1";
+            Assert.AreEqual(sql1, users.ToSql());
+            users.Where(null).Top(10);
+            string sql2 = "SELECT TOP 10 users.name FROM users";
+            Assert.AreEqual(sql2, users.ToSql());
+        }
+
+        [Test]
+        public void Consulta_Simples_Com_Disctinct()
+        {
+            var users = new Table("users");
+            users.Project(users["nascimento"])
+                .Where(users["nome"].Like("%g"))
+                .Distinct();
+            string sql_expected = "SELECT DISTINCT users.nascimento FROM users WHERE users.nome LIKE @users_nome_1";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 

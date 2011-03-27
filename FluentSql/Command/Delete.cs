@@ -56,6 +56,11 @@ namespace FluentSql.Command
             return this;
         }
 
+        public ICommand OrderBy(params IOrder[] order)
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         public ICommand GroupBy(params IGroup[] groups)
         {
             throw new NotSupportedException("Clause don't supported by command.");
@@ -81,6 +86,11 @@ namespace FluentSql.Command
             throw new NotSupportedException("Clause don't supported by command.");
         }
 
+        public ICommand Distinct()
+        {
+            throw new NotSupportedException("Clause don't supported by command.");
+        }
+
         #endregion
 
         #region Build Members
@@ -92,16 +102,6 @@ namespace FluentSql.Command
             }
             return string.Empty;
         }
-        #endregion
-
-        #region ICommand Members
-
-
-        public ICommand OrderBy(params IOrder[] order)
-        {
-            throw new NotSupportedException("Clause don't supported by command.");
-        }
-
         #endregion
     }
 }

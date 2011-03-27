@@ -33,5 +33,6 @@ namespace FluentSql
         ITable Insert(object values);
         ITable Update(object values);
         ITable Delete();
+        ITable Distinct();
     }
 }

@@ -109,14 +109,12 @@ namespace FluentSql
 
         public IJoin Join(ITable table)
         {
-            IJoin j = _command.Join(table);
-            return j;
+            return _command.Join(table);
         }
 
         public IJoin LeftJoin(ITable table)
         {
-            IJoin j = _command.LeftJoin(table);
-            return j;
+            return _command.LeftJoin(table);
         }
 
         public IJoin RightJoin(ITable table)
@@ -164,6 +162,12 @@ namespace FluentSql
         public ITable Top(int number)
         {
             _command.Top(number);
+            return this;
+        }
+
+        public ITable Distinct()
+        {
+            _command.Distinct();
             return this;
         }
 

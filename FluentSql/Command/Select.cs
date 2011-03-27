@@ -6,6 +6,7 @@ using FluentSql.Clause;
 using FluentSql.Expressions;
 using System.Collections;
 using FluentSql.Aggregates;
+using FluentSql.Exceptions;
 
 namespace FluentSql.Command
 {
@@ -21,7 +22,8 @@ namespace FluentSql.Command
             this.GroupBys = new List<IGroup>();
             this.Havings = new List<IExpression>();
             this._Count = false;
-            this._Top = 0;
+            this._Top = null;
+            this._Distinct = false;
         }
 
         #region ICommand Members
@@ -33,16 +35,22 @@ namespace FluentSql.Command
         public IList<IExpression> Havings { get; set; }
         public ITable Table { get; set; }
         public bool _Count { get; set; }
-        public int _Top { get; set; }
+        public int? _Top { get; set; }
+        public bool _Distinct { get; set; }
         
         public string ToSql()
         {
-            return String.Format("SELECT {0}{1} {2}{3}{4}{5}{6}{7}", BuildTop(), BuildProject(), 
+            return String.Format("SELECT {0}{1} {2}{3}{4}{5}{6}{7}", BuildTopOrDistinct(), BuildProject(), 
                 BuildFrom(), BuildJoin(), BuildWhere(), BuildOrderBy(), BuildGroupBy(), BuildHaving());
         }
 
         public ICommand Project(params IProject[] projects)
         {
+            if (projects == null)
+            {
+                Projects.Clear();
+                return this;
+            }
             foreach (var p in projects)
             {
                 Projects.Add(p);
@@ -80,12 +88,36 @@ namespace FluentSql.Command
 
         public ICommand Where(IExpression expression)
         {
+            if (expression == null)
+            {
+                Wheres.Clear();
+                return this;
+            }
             Wheres.Add(expression);
+            return this;
+        }
+
+        public ICommand OrderBy(params IOrder[] orders)
+        {
+            if (orders == null)
+            {
+                Orders.Clear();
+                return this;
+            }
+            foreach (IOrder order in orders)
+            {
+                Orders.Add(order);
+            }
             return this;
         }
 
         public ICommand GroupBy(params IGroup[] groups)
         {
+            if (groups == null)
+            {
+                GroupBys.Clear();
+                return this;
+            }
             foreach (IGroup g in groups)
             {
                 GroupBys.Add(g);    
@@ -95,6 +127,11 @@ namespace FluentSql.Command
 
         public ICommand Having(IExpression expression)
         {
+            if (expression == null)
+            {
+                Havings.Clear();
+                return this;
+            }
             Havings.Add(expression);
             return this;
         }
@@ -107,7 +144,19 @@ namespace FluentSql.Command
 
         public ICommand Top(int number)
         {
+            if (number < 0)
+            {
+                throw new InvalidClauseException("Number invalid for clause top.");
+            }
             this._Top = number;
+            this._Distinct = false;
+            return this;
+        }
+
+        public ICommand Distinct()
+        {
+            this._Distinct = true;
+            this._Top = 0;
             return this;
         }
 
@@ -162,7 +211,7 @@ namespace FluentSql.Command
         {
             if (Orders.Count > 0)
             {
-                return " ORDER BY " + string.Join(" AND ", (from o in Orders select o.AsOrder()).ToArray());
+                return " ORDER BY " + string.Join(", ", (from o in Orders select o.AsOrder()).ToArray());
             }
             return string.Empty;
         }
@@ -185,27 +234,18 @@ namespace FluentSql.Command
             return string.Empty;
         }
 
-        public string BuildTop()
+        public string BuildTopOrDistinct()
         {
-            if (_Top > 0)
+            if (this._Distinct)
+            {
+                return "DISTINCT "; 
+            }
+            if (_Top.HasValue)
             {
                 return string.Format("TOP {0} ", _Top);
             }
             return string.Empty;
         }
-        #endregion
-
-        #region ICommand Members
-
-        public ICommand OrderBy(params IOrder[] orders)
-        {
-            foreach (IOrder order in orders)
-            {
-                Orders.Add(order);
-            }
-            return this;
-        }
-
         #endregion
     }
 }
