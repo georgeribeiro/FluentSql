@@ -63,7 +63,7 @@ namespace FluentSql.Command
         public ICommand Values(object values)
         {
             IDictionary<string, object> keyvalue = Utils.ObjectToDicionary(values);
-            foreach (KeyValuePair<string, object> kvp in keyvalue)
+            foreach (KeyValuePair<string, object> kvp in keyvalue.OrderBy(x => x.Key).Select(x => x))
             {
                 if (kvp.Value != null)
                 {

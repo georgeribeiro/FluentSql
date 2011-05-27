@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace FluentSql.Test.Api
 {
     [TestFixture]
-    class TestTable
+    public class TestTable
     {
         [Test]
         public void Criar_Table_E_Verificar_O_Nome()

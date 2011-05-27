@@ -12,7 +12,7 @@ using FluentSql.Exceptions;
 namespace FluentSql.Test
 {
     [TestFixture]
-    class ComplexQuery
+    public class ComplexQuery
     {
         [Test]
         public void Usar_Uma_Table_No_Select()
@@ -425,7 +425,7 @@ namespace FluentSql.Test
             }
             catch (InvalidClauseException)
             {
-                Assert.True(true);
+                Assert.IsTrue(true);
             }
         }
 

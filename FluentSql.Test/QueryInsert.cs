@@ -16,8 +16,8 @@ namespace FluentSql.Test
         {
             ITable users = new Table("users");
             users.Insert(new { nome = "george", data_nascimento = new DateTime(1989, 8, 22), sexo = "M" });
-            string sql_expected = "INSERT INTO users(nome, data_nascimento, sexo) "+
-                "VALUES(@users_nome_1, @users_data_nascimento_1, @users_sexo_1)";
+            string sql_expected = "INSERT INTO users(data_nascimento, nome, sexo) "+
+                "VALUES(@users_data_nascimento_1, @users_nome_1, @users_sexo_1)";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
 
@@ -30,6 +30,7 @@ namespace FluentSql.Test
             hs.Add("sexo", "M");
             var t_users = new Table("users");
             t_users.Insert(hs);
+			Console.WriteLine(t_users.ToSql());
             string sql_expected = "INSERT INTO users(data_nascimento, nome, sexo) "
                                     +"VALUES(@users_data_nascimento_1, @users_nome_1, @users_sexo_1)";
             Assert.AreEqual(sql_expected, t_users.ToSql());
@@ -40,7 +41,7 @@ namespace FluentSql.Test
         {
             var users = new Table("users");
             users.Insert(new { nome="george", idade=Utils.NULL });
-            string sql_expected = "INSERT INTO users(nome, idade) VALUES(@users_nome_1, NULL)";
+            string sql_expected = "INSERT INTO users(idade, nome) VALUES(NULL, @users_nome_1)";
             Assert.AreEqual(sql_expected, users.ToSql());
         }
     }

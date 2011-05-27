@@ -3,3 +3,6 @@ glob:obj/
 glob:bin/
 glob:Debug/
 glob:Release/
+glob:test-results/
+glob:*.pidb
+glob:*.userprefs

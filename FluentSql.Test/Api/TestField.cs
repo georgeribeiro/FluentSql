@@ -8,7 +8,7 @@ using FluentSql.Command;
 namespace FluentSql.Test.Api
 {
     [TestFixture]
-    class TestField
+    public class TestField
     {
         [Test]
         public void Criar_Field_Sem_Alias()
@@ -25,7 +25,7 @@ namespace FluentSql.Test.Api
             var f = new Field(new Table("users"), "nome").As("nome_do_usuario");
             Assert.AreEqual("users.nome AS nome_do_usuario", f.AsProject());
             Assert.AreEqual("users.nome", f.Project);
-            Assert.NotNull(f.Alias);
+            Assert.IsNotNull(f.Alias);
         }
 
 
