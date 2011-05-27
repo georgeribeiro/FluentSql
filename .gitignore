@@ -1,0 +1,8 @@
+*.suo
+obj/
+bin/
+Debug/
+Release/
+test-results/
+*.pidb
+*.userprefs
