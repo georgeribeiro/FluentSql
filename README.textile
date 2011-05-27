@@ -1,2 +1,1 @@
-h2. FluentSql - Library for generation sql dynamic for C#
-
+h3. FluentSql - Library for dynamic sql generation for .NET
