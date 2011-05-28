@@ -23,6 +23,16 @@ namespace FluentSql.Aggregates
         }
 
         public Aggregate() { }
+		
+		public override int GetHashCode ()
+		{
+			return this.Project.GetHashCode();
+		}
+		
+		public override bool Equals (object obj)
+		{
+			return this.GetHashCode() == obj.GetHashCode();
+		}
 
         public IAggregate As(string alias)
         {
